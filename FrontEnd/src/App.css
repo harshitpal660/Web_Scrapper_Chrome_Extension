@@ -1,0 +1,15 @@
+.App {
+    color: white;
+    text-align: center;
+}
+
+.container {
+    width: 15rem;
+    height: 15rem;
+    background-color: rgb(167, 204, 167);
+}
+
+.buttons{
+    padding: 5px;
+    margin: 5px;
+}
