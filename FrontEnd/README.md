@@ -1,4 +1,4 @@
-A simple Hello World Chrome extension using React. 
+A web scrapping Chrome extension using React. 
 
 # Getting Started with Create React App
 
