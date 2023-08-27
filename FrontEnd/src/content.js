@@ -68,11 +68,11 @@ style.textContent = `
   }
 `;
 
-const gallery = null;
-const textData = null;
+let gallery = null;
+let textData = null;
 
 const loader = document.createElement('img');
-imageElement.src = loading;
+loader.src = loading;
 
 document.head.appendChild(style);
 // paragraph for summary and major points

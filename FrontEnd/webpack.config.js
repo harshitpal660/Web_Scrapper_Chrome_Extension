@@ -65,7 +65,7 @@ module.exports = {
             ],
         }),
         new webpack.EnvironmentPlugin({
-            REACT_APP_Web_scrapper : "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"
+            REACT_APP_Web_scrapper : process.env.REACT_APP_Web_scrapper
         }),
         ...getHtmlPlugins(["index"]),
     ],
