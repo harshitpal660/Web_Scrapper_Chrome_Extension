@@ -1,3 +1,4 @@
+import loading from "./Image/loader.gif";
 const url = window.location.href;
 const divAIData = document.createElement("div");
 console.log("1"+process.env.REACT_APP_Web_scrapper);
@@ -69,6 +70,10 @@ style.textContent = `
 
 const gallery = null;
 const textData = null;
+
+const loader = document.createElement('img');
+imageElement.src = loading;
+
 document.head.appendChild(style);
 // paragraph for summary and major points
 let p = document.createElement("p");
@@ -108,8 +113,8 @@ function displayButtons() {
     // console.log(divAIData);
     divAIData.innerHTML = `<h1>Summary</h1>`;
     divAIData.appendChild(p);
+    divAIData.appendChild(loader);
     displayDiv("summary");
-    
     scrap(url,"summary");
   });
 
@@ -120,6 +125,7 @@ function displayButtons() {
     // console.log(divAIData);
     divAIData.innerHTML = `<h1>Points</h1>`;
     divAIData.appendChild(p);
+    divAIData.appendChild(loader);
     displayDiv("points");
     scrap(url,"points");
   });
