@@ -43,7 +43,7 @@ export const openAIapiSchema = [
         {
           role: "system",
           content:
-            "summarize the content you are provided into major points and give in formatted order",
+            "summarize the content you are provided into major points and give in formatted order, it should be around 400 words",
         },
       ],
       temperature: 1,
@@ -51,3 +51,4 @@ export const openAIapiSchema = [
     },
   }
 ];
+

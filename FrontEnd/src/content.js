@@ -1,6 +1,6 @@
 const url = window.location.href;
 const divAIData = document.createElement("div");
-
+console.log("1"+process.env.REACT_APP_Web_scrapper);
 const style = document.createElement("style");
 style.textContent = `
   .wrapper{
@@ -66,6 +66,9 @@ style.textContent = `
     width:100%;
   }
 `;
+
+const gallery = null;
+const textData = null;
 document.head.appendChild(style);
 // paragraph for summary and major points
 let p = document.createElement("p");
@@ -105,9 +108,9 @@ function displayButtons() {
     // console.log(divAIData);
     divAIData.innerHTML = `<h1>Summary</h1>`;
     divAIData.appendChild(p);
-    displayDiv("points");
+    displayDiv("summary");
     
-    scrap(url);
+    scrap(url,"summary");
   });
 
   button2.addEventListener("click", () => {
@@ -118,7 +121,7 @@ function displayButtons() {
     divAIData.innerHTML = `<h1>Points</h1>`;
     divAIData.appendChild(p);
     displayDiv("points");
-    scrap(url);
+    scrap(url,"points");
   });
 }
 
@@ -126,22 +129,41 @@ function hideButtons() {
   divWrapper.remove();
 }
 
-function scrap(url) {
-  chrome.runtime.sendMessage(
-    (data = { action: "sendUrl", url: url,API:process.env.REACT_APP_Web_scrapper}),
-    (response) => {
-      // textdata = response
-      // console.log("object" + typeof response);
-      const gallery = response[1];
-      const textData = response[0];
-      console.log(gallery);
-      console.log(textData);
-      c = document.getElementById("responseText");
-      c.innerText = textData;
+function scrap(url,toScrap) {
+  console.log("text data is null "+textData === null);
+  console.log("2"+process.env.REACT_APP_Web_scrapper);
+  if(textData===null){
+    chrome.runtime.sendMessage(
+      (data = {  task:"sendUrl",url: url,API:process.env.REACT_APP_Web_scrapper,firstRender:textData,isSummary:toScrap}),
+      (response) => {
+        // textdata = response
+        // console.log("object" + typeof response);
+        const gallery = response[1];
+        const textData = response[0];
+        console.log(gallery);
+        console.log(textData);
+        c = document.getElementById("responseText");
+        c.innerText = textData;
+      }
+    );
+  }else{
+    chrome.runtime.sendMessage(
+      (data = { task:"sendUrl", url: url,API:process.env.REACT_APP_Web_scrapper,firstRender:textData,isSummary:toScrap}),
+      (response) => {
+        // textdata = response
+        // console.log("object" + typeof response);
+        // gallery = response[1];
+        textData = response;
+        console.log("Response "+ response);
+        console.log("gallery "+gallery);
+        console.log("textdata "+textData);
+        c = document.getElementById("responseText");
+        c.innerText = textData;
       
-      
-    }
-  );
+      }
+    );
+  }
+  
 }
 
 function displayDiv(toScrap) {

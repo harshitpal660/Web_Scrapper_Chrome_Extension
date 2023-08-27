@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
 import { openAIapiSchema } from "./apiSchemaAi";
 
-export async function AICall(dataMain,APIkey,action) {
+export async function AICall(dataMain,APIkey,isSummary) {
   // const { Configuration, OpenAIApi } = require("openai");
   const option1 = openAIapiSchema[0].option;  // for summary
   const option2 = openAIapiSchema[1].option;  // for large data
@@ -54,14 +54,26 @@ export async function AICall(dataMain,APIkey,action) {
   
   // try{
     dataMain = final_array.join(" ");
+  if(isSummary==="summary"){
     option1.messages.push({"role":"user","content":dataMain});
     let chatCompletion = await openai.chat.completions.create(option1);
     let gptAnswer = chatCompletion.choices[0].message.content;
 
     // const Total_chunks = final_array.length;
-    console.log("Main"+WordCount(dataMain));
-    console.log("gptAnswer"+WordCount(gptAnswer));
+    console.log("Main of Summary"+WordCount(dataMain));
+    console.log("gptAnswer of Summary"+WordCount(gptAnswer));
     return gptAnswer;
+  }else{
+    option3.messages.push({"role":"user","content":dataMain});
+    let chatCompletion = await openai.chat.completions.create(option3);
+    let gptAnswer = chatCompletion.choices[0].message.content;
+
+    // const Total_chunks = final_array.length;
+    console.log("Main of Points"+WordCount(dataMain));
+    console.log("gptAnswer of Points"+WordCount(gptAnswer));
+    return gptAnswer;
+  }
+    
   // }catch(e){
   //   console.error("error "+e);
   // }

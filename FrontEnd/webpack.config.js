@@ -44,6 +44,18 @@ module.exports = {
                   }
                 },
             },
+            {
+                test: /\.(png|jpg|jpeg|gif|svg)$/,
+                use: [
+                  {
+                    loader: 'file-loader',
+                    options: {
+                      name: 'images/[name].[hash].[ext]', // Output path for images
+                    },
+                  },
+                ],
+              },
+            
         ],
     },
     plugins: [
@@ -52,11 +64,16 @@ module.exports = {
                 { from: "manifest.json", to: "../manifest.json" },
             ],
         }),
-        new webpack.EnvironmentPlugin(config.parsed),
+        new webpack.EnvironmentPlugin({
+            REACT_APP_Web_scrapper : "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"
+        }),
         ...getHtmlPlugins(["index"]),
     ],
     resolve: {
         extensions: [".tsx", ".ts", ".js",".png"],
+        fallback: {
+            "vm": require.resolve("vm-browserify")
+          }
     },
     output: {
         path: path.join(__dirname, "dist/js"),
