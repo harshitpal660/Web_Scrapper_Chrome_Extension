@@ -50,7 +50,7 @@ module.exports = {
                   {
                     loader: 'file-loader',
                     options: {
-                      name: 'images/[name].[hash].[ext]', // Output path for images
+                      name: 'Images/[name].[hash].[ext]', // Output path for images
                     },
                   },
                 ],

@@ -43,7 +43,7 @@ export const openAIapiSchema = [
         {
           role: "system",
           content:
-            "summarize the content you are provided into major points and give in formatted order, it should be around 400 words",
+            "From the provided text generate the major points in a structured and formated way numberin is necessary, it should be around 400 words",
         },
       ],
       temperature: 1,

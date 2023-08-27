@@ -1,4 +1,3 @@
-import loading from "./Image/loader.gif";
 const url = window.location.href;
 const divAIData = document.createElement("div");
 console.log("1"+process.env.REACT_APP_Web_scrapper);
@@ -6,24 +5,34 @@ const style = document.createElement("style");
 style.textContent = `
   .wrapper{
     z-index:10000000000;
-    position: absolute;
-    top: 10px;
-    left:50%;
-    transform: translate(-50%);
+    position: absolute !important;
+    
+    top: 10px !important;
+    left:50% !important;
+    transform: translate(-50%) !important;
     width: fit-content !important;
   }
+  .extensionButton{
+    padding: 3px !important;
+    margin: 5px !important;
+    border-radius: 5px !important;
+  }
+  .slider{
+    background-color: rgb(214,235,252);
+  }
   .aiData{
-    height: 90% !important;
+    height: fit-content !important;
+    min-height: 80% !important;
     width: 95% !important;
-    top: 60px;
-    left:50%;
-    
-    transform: translate(-50%);
+    top: 60px !important;
+    left:50% !important;
+    border-radius: 10px;
+    transform: translate(-50%) !important;
     z-index:100000000000;
-    position: absolute;
-    text-align: center;
+    position: absolute !important;
+    text-align: center !important;
     background-color: rgb(32,33,36,0.9) !important;
-    overflow:scroll;
+    overflow:scroll !important;
 
   }
   .aiData p{
@@ -31,48 +40,80 @@ style.textContent = `
   }
   .aiData h1{
     color: white !important;
+    font-family: "Lucida Console", "Courier New", monospace !important;
   }
   .aiData::-webkit-scrollbar {
-    display: none;
+    display: none !important;
   }
 
-  .loader {
-    border: 10px solid #f3f3f3;
-    border-radius: 50%;
-    border-top: 10px solid #3498db;
-    width: 60px;
-    height: 60px;
-    position: absolute;
-    top: 50%;
-    left:50%;
-    transform: translate(-50%,-50%);
-    display:none
-    -webkit-animation: spin 2s linear infinite; /* Safari */
-    animation: spin 2s linear infinite;
-  }
-  
-  /* Safari */
-  @-webkit-keyframes spin {
-    0% { -webkit-transform: rotate(0deg); }
-    100% { -webkit-transform: rotate(360deg); }
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+  p{
+    display: inline-block !important;
   }
 
-  .wrapper{
-    height:20px;
-    width:100%;
+  #animationContainer{
+    border: 3px solid black !important;
+    border-radius: 5px !important;
+    overflow: hidden !important;
+    width: 100% !important;
+    position: absolute !important;
+    top: 50% !important;
+    left:50% !important;
+    transform: translate(-50%,-50%) !important;
   }
+
+  #animation{
+    color: white !important;
+    /* animation properties */
+    -moz-transform: translateX(100%);
+    -webkit-transform: translateX(100%);
+    transform: translateX(100%);
+    
+    -moz-animation: my-animation 15s linear infinite;
+    -webkit-animation: my-animation 15s linear infinite;
+    animation: my-animation 15s linear infinite;
+  }
+  /* for Firefox */
+@-moz-keyframes my-animation {
+  from { -moz-transform: translateX(100%); }
+  to { -moz-transform: translateX(-100%); }
+}
+
+/* for Chrome */
+@-webkit-keyframes my-animation {
+  from { -webkit-transform: translateX(100%); }
+  to { -webkit-transform: translateX(-100%); }
+}
+
+@keyframes my-animation {
+  from {
+    -moz-transform: translateX(100%);
+    -webkit-transform: translateX(100%);
+    transform: translateX(100%);
+  }
+  to {
+    -moz-transform: translateX(-100%);
+    -webkit-transform: translateX(-100%);
+    transform: translateX(-100%);
+  }
+}
+  
 `;
 
+// Contains all the images of the webpage
 let gallery = null;
+
+// contains the formated data of summary or majorpoints which ever user gets first
 let textData = null;
 
-const loader = document.createElement('img');
-loader.src = loading;
+// heading data after apicalls 
+let headingMain = null;
+// animation for moving text
+const animationContainer =document.createElement("div");
+animationContainer.setAttribute("id","animationContainer");
+const animation =document.createElement("div");
+animation.setAttribute("id","animation");
+animation.innerHTML = "Fetching your data. . . &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp till then <p>&#9749</p>"
+animationContainer.appendChild(animation);
 
 document.head.appendChild(style);
 // paragraph for summary and major points
@@ -111,9 +152,11 @@ function displayButtons() {
     divAIData.setAttribute("id", "summary");
     
     // console.log(divAIData);
-    divAIData.innerHTML = `<h1>Summary</h1>`;
+    divAIData.innerHTML =  `<h1 id="headingScraper">Generating ...</h1>`;
     divAIData.appendChild(p);
-    divAIData.appendChild(loader);
+    p.innerText = ""
+    divAIData.appendChild(animationContainer);
+    headingMain = "Summary";
     displayDiv("summary");
     scrap(url,"summary");
   });
@@ -123,9 +166,11 @@ function displayButtons() {
     divAIData.setAttribute("id", "points");
     
     // console.log(divAIData);
-    divAIData.innerHTML = `<h1>Points</h1>`;
+    divAIData.innerHTML = `<h1 id="headingScrapper">Generating ...</h1>`;
     divAIData.appendChild(p);
-    divAIData.appendChild(loader);
+    p.innerText = ""
+    divAIData.appendChild(animationContainer);
+    headingMain = "Major Points";
     displayDiv("points");
     scrap(url,"points");
   });
@@ -140,21 +185,25 @@ function scrap(url,toScrap) {
   console.log("2"+process.env.REACT_APP_Web_scrapper);
   if(textData===null){
     chrome.runtime.sendMessage(
-      (data = {  task:"sendUrl",url: url,API:process.env.REACT_APP_Web_scrapper,firstRender:textData,isSummary:toScrap}),
+      ({  task:"sendUrl",url: url,API:process.env.REACT_APP_Web_scrapper,firstRender:textData,isSummary:toScrap}),
       (response) => {
         // textdata = response
         // console.log("object" + typeof response);
+        const heading = document.getElementById("headingScrapper");
         const gallery = response[1];
         const textData = response[0];
         console.log(gallery);
         console.log(textData);
-        c = document.getElementById("responseText");
+        heading.innerHTML = `<p>${headingMain}:&#x1F60A;</p>`;
+        let c = document.getElementById("responseText");
+        animationContainer.remove();
         c.innerText = textData;
+
       }
     );
   }else{
     chrome.runtime.sendMessage(
-      (data = { task:"sendUrl", url: url,API:process.env.REACT_APP_Web_scrapper,firstRender:textData,isSummary:toScrap}),
+      ({ task:"sendUrl", url: url,API:process.env.REACT_APP_Web_scrapper,firstRender:textData,isSummary:toScrap}),
       (response) => {
         // textdata = response
         // console.log("object" + typeof response);
@@ -163,7 +212,9 @@ function scrap(url,toScrap) {
         console.log("Response "+ response);
         console.log("gallery "+gallery);
         console.log("textdata "+textData);
-        c = document.getElementById("responseText");
+        heading.innerHTML = `<p>${headingMain}: &#x1F60A;</p>`;
+        let c = document.getElementById("responseText");
+        animationContainer.remove();
         c.innerText = textData;
       
       }

@@ -1,6 +1,7 @@
 import OpenAI from 'openai';
 import { openAIapiSchema } from "./apiSchemaAi";
 
+
 export async function AICall(dataMain,APIkey,isSummary) {
   // const { Configuration, OpenAIApi } = require("openai");
   const option1 = openAIapiSchema[0].option;  // for summary
@@ -13,7 +14,7 @@ export async function AICall(dataMain,APIkey,isSummary) {
   // as theres a limit of 2048 tokens we must convert long data into chunks 2048 tokens has a limit of (1248,1568)
   let final_array = [];
   console.log("Main "+WordCount(dataMain));
-  while(WordCount(final_array.join(" "))>1200 || final_array.length===0){
+  try{while(WordCount(final_array.join(" "))>1200 || final_array.length===0){
     // console.log("okkk");
     let data = final_array.join(" ");
     // console.log("data "+data);
@@ -50,10 +51,29 @@ export async function AICall(dataMain,APIkey,isSummary) {
     final_array = [...final_array_inside];
     // final_array = [...final_array_inside];
     console.log("final array "+WordCount(final_array.join(" ")));
+  }}catch(e){
+    console.log("error"+e);
+    dataMain = final_array.join(" ");
+    return LastCall(dataMain,isSummary,option1,option3);
   }
   
   // try{
     dataMain = final_array.join(" ");
+    return LastCall(openai,dataMain,isSummary,option1,option3);
+  
+    
+  // }catch(e){
+  //   console.error("error "+e);
+  // }
+  
+  
+}
+
+
+async function LastCall(openai,dataMain,isSummary,option1,option3){
+  console.log(isSummary);
+  console.log(option1);
+  console.log(option3);
   if(isSummary==="summary"){
     option1.messages.push({"role":"user","content":dataMain});
     let chatCompletion = await openai.chat.completions.create(option1);
@@ -73,16 +93,7 @@ export async function AICall(dataMain,APIkey,isSummary) {
     console.log("gptAnswer of Points"+WordCount(gptAnswer));
     return gptAnswer;
   }
-    
-  // }catch(e){
-  //   console.error("error "+e);
-  // }
-  
-  
 }
-
-
-
 
 function WordCount(str) { 
   return str.split(" ").length;
