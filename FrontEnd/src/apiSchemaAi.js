@@ -1,54 +1,56 @@
-export const openAIapiSchema = [
-  {
-    id: "summary",
-    option: {
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "user",
+// export const openAIapiSchema = [
+//   {
+//     id: "summary",
+    
+//   },
+//   {
+//     id: "summary",
+//   },
+//   {
+//     id: "points",
+//   }
+// ];
+// const { encode, decode } = require('gpt-3-encoder');
 
-          content:
-            "I will give you the scrap data of websites you need to provide the formatted summary with Title, description, objectives, Conclusion. Summary should be around 500 words of the original text",
-        },
-      ],
-      temperature: 1,
-      max_tokens: 2048,
-    },
-  },
-  {
-    id: "summary",
-    option: {
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "system",
-          content:"I will provide you the scrapped data of any web site your task is to reduce the data by 50% and remove unnenecessay details and keywods from that such that the acctual meaning of the data won't change",
+// const str = 'This is an example sentence to try encoding out on!'
+// const encoded = encode(str)
+// console.log('Encoded this string looks like: ', encoded)
 
-        },
-        {
-          role: "user",
-          content:"",
-          
-        },
-      ],
-      temperature: 1,
-      max_tokens: 2048,
-    },
-  },
-  {
-    id: "points",
-    option: {
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "system",
-          content:
-            "From the provided text generate the major points in a structured and formated way numberin is necessary, it should be around 400 words",
-        },
-      ],
-      temperature: 1,
-      max_tokens: 2048,
-    },
+// console.log('We can look at each token and what it represents')
+// for(let token of encoded){
+//   console.log({token, string: decode([token])})
+// }
+
+// const decoded = decode(encoded)
+// console.log('We can decode it back into:\n', decoded)
+//  let str = "+(বাংলাদেশ)ghjgjh_g653645jhbjhb'h56435jbjkn----hj/nhnjjjj634jjjjjj"
+//  console.log("before cleaning"+str);
+//  str = str.replaceAll(",","")
+//  str = str.replaceAll("+","")
+//  str = str.replaceAll("-","")
+//  str = str.replaceAll("_","")
+//  str = str.replaceAll("/","")
+//  str = str.replaceAll("*","")
+//  str = str.replaceAll("&","")
+//  str = str.replaceAll(";","")
+//  str = str.replaceAll(":","")
+//  str = str.replaceAll("$","")
+//  str = str.replaceAll("|","")
+//  str = str.replaceAll("/n","")
+//  str = str.replace(/[0-9]/g, ''); // to remove digits
+//  str = str.replace(/[^\x00-\x7F]/g, ''); // to remove other language than english
+//  str = str.replace(/\s+/g, " ").trim(); // remove unnecessary spaces
+//  str = str.replace(/\([^)]*\)/g, ''); // remove content within parentheses
+//  console.log("after cleaning"+str);
+
+let myObject = {
+    name: "Alice",
+    age: 25,
+    city: "Wonderland"
+  };
+
+  for (let key in myObject) {
+    if (myObject.hasOwnProperty(key)) {
+      console.log(key, myObject[key]);
+    }
   }
-];
-

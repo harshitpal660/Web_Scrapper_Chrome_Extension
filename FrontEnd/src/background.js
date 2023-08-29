@@ -1,4 +1,4 @@
-import { measureMemory } from "vm";
+// import { measureMemory } from "vm";
 import { AICall } from "./OpenAI";
 console.log("backgroundReact");
 chrome.runtime.onMessage.addListener(function a(message, sender, sendResponse) {
@@ -19,7 +19,18 @@ chrome.runtime.onMessage.addListener(function a(message, sender, sendResponse) {
 
 chrome.runtime.onMessage.addListener(function b(message, sender, sendResponse) {
   console.log("text data is null " + message.firstRender === null);
-  if(message.firstRender === null && message.task==="sendUrl"){
+  if(message.task=="getImages"){
+    const url = message.url;
+    console.log("url set");
+    let gallery = fetchImages(url);
+    gallery.then((result)=>{
+      console.log("gallery");
+      console.log(result);
+      sendResponse(result);
+    })
+    
+  }
+  else if(message.firstRender === null && message.task==="sendUrl"){
     const url = message.url;
     console.log("url set");
     // console.log(message.API);
@@ -43,36 +54,65 @@ chrome.runtime.onMessage.addListener(function b(message, sender, sendResponse) {
 
         console.log("Scraped Data:", data);
         let rawData = data[0] + data[1];
-        rawData = rawData.replace(/\s+/g, " ").trim();
-        console.log("3"+message.API);
+        // console.log("3"+message.API);
         let screenData = AICall(rawData, message.API,message.isSummary);
         // console.log("summary:", summary);
         screenData.then((result) => {
           // const gallery = {};
-          console.log("result where data is not null " + result);
-          const res = [result, { ...data[2] }];
-          console.log("result where data is not null " + res);
+
+          const res = [result.gptAnswer,result.dataMain];
+          console.log("result where data is null ");
+          console.log(result);
           sendResponse(res);
         });
+    
       })
       .catch((error) => {
-        console.error(error);
+        console.log(error);
+        sendResponse("Server not reachable")
       });
   }else if (message.firstRender !== null  && message.task==="sendUrl") {
     console.log("3"+message.API);
       const screenData = AICall(message.firstRender, message.API, message.isSummary);
       screenData.then((result) => {
         // const gallery = {};
-        console.log("result where data is not null " + result);
-        // const res = [result, { ...data[2] }];
-        // console.log("result" + res);
-        sendResponse(result);
+        
+        const res = [result.gptAnswer,result.dataMain];
+        console.log("result where data is not null " + res);
+        sendResponse(res);
       }).catch((e)=>{
-        console.log(e);
+        console.log(error);
+        sendResponse("Server not reachable")
       });
+
   }
 
   return true;
 });
 
-// export default url;
+async function fetchImages(url){
+  const gallery = await fetch("http://localhost:3001/gallery", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ url }),
+    }).then((response) => {
+      if (response.ok) {
+        // console.log(response);
+        return response.json();
+      } else {
+        throw new Error("Error fetching data");
+      }
+    })
+    .then((data) => {
+      // console.log("Images: ", data);
+      return data
+    })
+    .catch((error) => {
+      console.log(error);
+      sendResponse("Server not reachable")
+    });
+    return gallery;
+}
+
