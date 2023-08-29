@@ -1,7 +1,10 @@
 // import { measureMemory } from "vm";
 import { AICall } from "./OpenAI";
+import { AICall2 } from "./testAICall";
 console.log("backgroundReact");
-chrome.runtime.onMessage.addListener(function a(message, sender, sendResponse) {
+
+// fetching message command from App.tsxjs for opening and closing of buttons
+chrome.runtime.onMessage.addListener(function a(message) {
   if (message.action === "openContent") {
     // Send a message to the active tab's content script
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -17,12 +20,15 @@ chrome.runtime.onMessage.addListener(function a(message, sender, sendResponse) {
   }
 });
 
+// fetching message command from content.js for fetching Summary, major points and Images 
 chrome.runtime.onMessage.addListener(function b(message, sender, sendResponse) {
   console.log("text data is null " + message.firstRender === null);
+  const url = message.url;
+  console.log("url set");
+
+  // condition for getting images from NodeJs server
   if(message.task=="getImages"){
-    const url = message.url;
-    console.log("url set");
-    let gallery = fetchImages(url);
+    const gallery = fetchImages(url);
     gallery.then((result)=>{
       console.log("gallery");
       console.log(result);
@@ -30,11 +36,45 @@ chrome.runtime.onMessage.addListener(function b(message, sender, sendResponse) {
     })
     
   }
+
+  // condition for getting Summary/Major Points from NodeJs server and open AI Server
   else if(message.firstRender === null && message.task==="sendUrl"){
-    const url = message.url;
-    console.log("url set");
-    // console.log(message.API);
-    fetch("http://localhost:3001/scrape", {
+    const data = fetchScrappedDataFirstTime(url,message.API,message.isSummary)
+    data.then((result)=>{
+      console.log("Scrapped data first time");
+      sendResponse(result);
+    })
+    
+  }
+  
+// here i will not do scrapping as it was the not the first time, and we have previously scrapped data stored in message.firstRender
+// we will directly send it to open ai
+  else if (message.firstRender !== null  && message.task==="sendUrl") {
+
+    // Open ai api call
+      const screenData = AICall(message.firstRender, message.API, message.isSummary);
+
+      screenData.then((result) => {
+        // const gallery = {};
+         // 'result.data' main is the reduced data which will generate the final result whether it's summary or points
+         // I am storing it for preventing srapping of data again 
+        const res = [result.gptAnswer,result.dataMain];
+        console.log("result where data is not null ");
+        console.log(res);
+        sendResponse(res);
+      }).catch((e)=>{
+        console.log(error);
+        sendResponse("Server not reachable")
+      });
+
+  }
+
+  return true;
+});
+
+// if we are fetching data for the first time in that case we need to scrapp the data from the webpage
+async function fetchScrappedDataFirstTime(url,API,isSummary){
+  const AIResponse = await fetch("http://localhost:3001/scrape", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -55,40 +95,26 @@ chrome.runtime.onMessage.addListener(function b(message, sender, sendResponse) {
         console.log("Scraped Data:", data);
         let rawData = data[0] + data[1];
         // console.log("3"+message.API);
-        let screenData = AICall(rawData, message.API,message.isSummary);
-        // console.log("summary:", summary);
-        screenData.then((result) => {
-          // const gallery = {};
-
-          const res = [result.gptAnswer,result.dataMain];
-          console.log("result where data is null ");
-          console.log(result);
-          sendResponse(res);
-        });
+        return AICall(rawData,API,isSummary);
+  
     
+      }).then((result) => {
+        // const gallery = {};
+
+        const res = [result.gptAnswer,result.dataMain];
+        console.log("result where data is null ");
+        console.log(res);
+        return res;
       })
       .catch((error) => {
         console.log(error);
-        sendResponse("Server not reachable")
+       return "Server not reachable";
       });
-  }else if (message.firstRender !== null  && message.task==="sendUrl") {
-    console.log("3"+message.API);
-      const screenData = AICall(message.firstRender, message.API, message.isSummary);
-      screenData.then((result) => {
-        // const gallery = {};
-        
-        const res = [result.gptAnswer,result.dataMain];
-        console.log("result where data is not null " + res);
-        sendResponse(res);
-      }).catch((e)=>{
-        console.log(error);
-        sendResponse("Server not reachable")
-      });
+    // console.log("test");
+    // console.log(AIResponse);
+    return AIResponse;
+}
 
-  }
-
-  return true;
-});
 
 async function fetchImages(url){
   const gallery = await fetch("http://localhost:3001/gallery", {

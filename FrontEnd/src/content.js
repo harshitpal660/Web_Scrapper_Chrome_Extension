@@ -1,6 +1,6 @@
+import { getImages,scrap } from "./utils";
 
 const url = window.location.href;
-console.log("1" + process.env.REACT_APP_Web_scrapper);
 const style = document.createElement("style");
 style.textContent = `
   .wrapper{
@@ -15,7 +15,7 @@ style.textContent = `
     padding: 3px !important;
     margin: 5px !important;
     border-radius: 5px !important;
-    background-scolor: rgb(214,235,252) !important;
+    background-color: rgb(214,235,252) !important;
     font-family: "Lucida Console", "Courier New", monospace !important;
     cursor:pointer;
     background-color: rgb(204,38,83) !important;
@@ -61,6 +61,7 @@ style.textContent = `
 
   p{
     display: inline-block !important;
+    white-space: nowrap !important;
   }
 
   #animationContainer{
@@ -161,11 +162,10 @@ style.textContent = `
   
 `;
 
+
+
 // Contains all the images of the webpage
 let uniquesImages =  {};
-
-// contains the formated data of summary or majorpoints which ever user gets first
-let textData = null;
 
 // heading data after apicalls
 let headingMain = null;
@@ -233,7 +233,7 @@ function displayButtons() {
     divAIData.appendChild(animationContainer);
     headingMain = "Summary";
     document.body.appendChild(divAIData);
-    scrap(url, "summary");
+    scrap(url, "summary",animationContainer,headingMain);
   });
 
   button2.addEventListener("click", () => {
@@ -244,7 +244,7 @@ function displayButtons() {
     divAIData.appendChild(animationContainer);
     headingMain = "Major Points";
     document.body.appendChild(divAIData);
-    scrap(url, "points");
+    scrap(url, "points",animationContainer,headingMain);
   });
 
   button3.addEventListener("click", ()=>{
@@ -255,122 +255,9 @@ function displayButtons() {
     divAIData.appendChild(animationContainer);
     headingMain = "Gallery";
     document.body.appendChild(divAIData);
-    getImages(url);
+    getImages(url,animationContainer,uniquesImages,imageContainer);
   })
 }
 
 
-
-function scrap(url, toScrap) {
-  console.log("text data is null " + textData);
-  console.log("2" + process.env.REACT_APP_Web_scrapper);
-  if (textData === null) {
-    chrome.runtime.sendMessage(
-      {
-        task: "sendUrl",
-        url: url,
-        API: process.env.REACT_APP_Web_scrapper,
-        firstRender: textData,
-        isSummary: toScrap,
-      },
-      (response) => {
-        // textdata = response
-        // console.log("object" + typeof response);
-        if (response === "Server not reachable") {
-          let c = document.getElementById("responseText");
-          animationContainer.remove();
-          c.innerText = response;
-          return;
-        }
-        const heading = document.getElementById("headingScrapper");
-        const gallery = response[2];
-        textData = response[0];
-
-        console.log(gallery);
-        console.log(textData);
-        heading.innerHTML = `${headingMain}:&#x1F60A;`;
-        let c = document.getElementById("responseText");
-        animationContainer.remove();
-        c.innerText = textData;
-        console.log("respone " + response);
-        textData = response[1]; // this step will store reduced data in textdata and not the summary or major points
-      }
-    );
-  } else {
-    console.log("inside else");
-    chrome.runtime.sendMessage(
-      {
-        task: "sendUrl",
-        url: url,
-        API: process.env.REACT_APP_Web_scrapper,
-        firstRender: textData,
-        isSummary: toScrap,
-      },
-      (response) => {
-        // textdata = response
-        // console.log("object" + typeof response);
-        // gallery = response[1];
-        if (response === "Server not reachable") {
-          let c = document.getElementById("responseText");
-          animationContainer.remove();
-          c.innerText = response;
-          return;
-        }
-        const heading = document.getElementById("headingScrapper");
-        textData = response[0];
-        console.log("Response " + response);
-        console.log("gallery " + gallery);
-        console.log("textdata " + textData);
-        heading.innerHTML = `${headingMain}: &#x1F60A;`;
-        let c = document.getElementById("responseText");
-        animationContainer.remove();
-        c.innerText = textData;
-        textData = response[1]; // this step will store reduced data in textdata and not the summary or major points
-      }
-    );
-  }
-}
-
-function getImages(url){
-  chrome.runtime.sendMessage(
-    {
-      task:"getImages",
-      API: process.env.REACT_APP_Web_scrapper,
-      url:url
-    },(response)=>{
-      // console.log("res"+response);
-      
-      for (let obj of response) {
-        if (!uniquesImages.hasOwnProperty(obj.alt)) {
-
-          uniquesImages[obj.alt] = obj.src;
-        }
-      }
-      animationContainer.remove();
-      const heading = document.getElementById("headingScrapper");
-      heading.innerHTML = `Images: &#x1F60A;`
-      for (let key in uniquesImages) {
-        if (uniquesImages.hasOwnProperty(key)) {
-          let imageWrapper = document.createElement("div");
-          imageWrapper.setAttribute("class","image-wrapper");
-          let heading = document.createElement("h3");
-          heading.setAttribute("class","imgHeading");
-          heading.innerText = key;
-          imgDiv = document.createElement("div")
-          imgDiv.setAttribute("class","imgDiv");
-          let img = document.createElement("img")
-          img.setAttribute("class","image");
-          img.src = uniquesImages[key];
-          img.alt = key;
-          imgDiv.appendChild(img);
-          imageWrapper.appendChild(heading);
-          imageWrapper.appendChild(imgDiv);
-          imageContainer.appendChild(imageWrapper);
-        }
-
-      }
-      
-    }
-  )
-}
 

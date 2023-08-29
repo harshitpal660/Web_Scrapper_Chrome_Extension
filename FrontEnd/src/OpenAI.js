@@ -1,58 +1,16 @@
 import OpenAI from 'openai';
 // import { openAIapiSchema } from "./apiSchemaAi";
+import { option1,option2,option3 } from './option';
+import { cleanData,WordCount } from './utils';
 
 
+
+// limitations of free tier 
+// - Max 2048 tokens can be sent in one request or 2048 tokens can stay in context memory of model
+// - Max 40000 tokens/min is allowed to send 
+//  -Max 3 req/min is allowed
+//  -Max 200 req/day is allowed
 export async function AICall(dataMain,APIkey,isSummary) {
-  // const { Configuration, OpenAIApi } = require("openai");
-  // for summary
-  const option1 = {
-    model: "gpt-3.5-turbo",
-    messages: [
-      {
-        role: "user",
-
-        content:
-          "I will give you the scrap data of websites you need to provide the formatted summary with Title, description, objectives, Conclusion. Summary should be around 500 words of the original text",
-      },
-    ],
-    temperature: 1,
-    max_tokens: 2048,
-  }  
-
-  // for large data
-  const option2 = {
-    model: "gpt-3.5-turbo",
-    messages: [
-      {
-        role: "system",
-        content:"I will provide you the scrapped data of any web site your task is to reduce the data by 50% and remove unnenecessay details and keywods from that such that the acctual meaning of the data won't change",
-
-      },
-      {
-        role: "user",
-        content:"",
-        
-      },
-    ],
-    temperature: 1,
-    max_tokens: 2048,
-  }  
-  
-// for major points
-  const option3 = {
-    model: "gpt-3.5-turbo",
-    messages: [
-      {
-        role: "system",
-        content:
-          "From the provided text generate the major points in a structured and formated way numberin is necessary, it should be around 400 words",
-      },
-    ],
-    temperature: 1,
-    max_tokens: 2048,
-  } 
-
-
   const openai = new OpenAI({
     apiKey: APIkey // This is also the default, can be omitted
   });
@@ -61,7 +19,6 @@ export async function AICall(dataMain,APIkey,isSummary) {
   let final_array = [];
   console.log("Main "+WordCount(dataMain));
   try{
-    console.log("final Array count"+ WordCount(final_array.join(" ")));
     while(WordCount(final_array.join(" "))>1200 || final_array.length===0){
     // console.log("okkk");
     let data = final_array.join(" ");
@@ -149,28 +106,3 @@ async function LastCall(openai,dataMain,isSummary,option1,option3){
   }
 }
 
-function WordCount(str) { 
-  return str.split(" ").length;
-}
-
-function cleanData(str){
-  console.log("before cleaning"+WordCount(str));
-  str = str.replaceAll(",","")
-  str = str.replaceAll("+","")
-  str = str.replaceAll("-","")
-  str = str.replaceAll("_","")
-  str = str.replaceAll("/","")
-  str = str.replaceAll("*","")
-  str = str.replaceAll("&","")
-  str = str.replaceAll(";","")
-  str = str.replaceAll(":","")
-  str = str.replaceAll("$","")
-  str = str.replaceAll("|","")
-  str = str.replaceAll("/n","")
-  str = str.replace(/[0-9]/g, ''); // to remove digits
-  str = str.replace(/[^\x00-\x7F]/g, ''); // to remove other language than english
-  str = str.replace(/\s+/g, " ").trim(); // remove unnecessary spaces
-  str = str.replace(/\([^)]*\)/g, ''); // remove content within parentheses
-  console.log("before cleaning"+WordCount(str));
-  return str;
-}
