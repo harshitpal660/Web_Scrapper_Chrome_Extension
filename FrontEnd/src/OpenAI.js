@@ -62,20 +62,16 @@ export async function AICall(dataMain,APIkey,isSummary) {
     console.log("final array "+WordCount(final_array.join(" ")));
   }}catch(e){
     console.log("error "+e);
+    final_array = [...final_array_inside];
     dataMain = final_array.slice(0, 1000).join(" ");
     return LastCall(openai,dataMain,isSummary,option1,option3);
   }
-  
-  // try{
+
     dataMain = final_array.join(" ");
     
     return LastCall(openai,dataMain,isSummary,option1,option3);
   
-    
-  // }catch(e){
-  //   console.error("error "+e);
-  // }
-  
+
   
 }
 
@@ -105,4 +101,5 @@ async function LastCall(openai,dataMain,isSummary,option1,option3){
     return {gptAnswer,dataMain};
   }
 }
+
 

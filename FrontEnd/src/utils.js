@@ -1,3 +1,7 @@
+import { AICall } from "./OpenAI";
+import { AICall2 } from "./testAICall";
+
+
 export function WordCount(str) {
   return str.split(" ").length;
 }
@@ -34,6 +38,21 @@ export function getImages(url,animationContainer,uniquesImages,imageContainer) {
     },
     (response) => {
       // console.log("res"+response);
+      if(response === "Data not found"){
+        animationContainer.remove();
+        const heading = document.getElementById("headingScrapper");
+
+        heading.innerHTML = `Sorry :&#128532;`;
+        imageContainer.innerText = "This data is not present in this webpage or they might have applied some additional security to this page";
+        return;
+      }else if(response=== "Server not reachable"){
+        animationContainer.remove();
+        const heading = document.getElementById("headingScrapper");
+
+        heading.innerHTML = `Sorry :&#128532;`;
+        imageContainer.innerText = "Your NodeJs Server is not running";
+        return;
+      }
 
       for (let obj of response) {
         if (!uniquesImages.hasOwnProperty(obj.alt)) {
@@ -47,9 +66,9 @@ export function getImages(url,animationContainer,uniquesImages,imageContainer) {
         if (uniquesImages.hasOwnProperty(key)) {
           let imageWrapper = document.createElement("div");
           imageWrapper.setAttribute("class", "image-wrapper");
-          let heading = document.createElement("h3");
-          heading.setAttribute("class", "imgHeading");
-          heading.innerText = key;
+          let imgheading = document.createElement("h3");
+          imgheading.setAttribute("class", "imgHeading");
+          imgheading.innerText = key;
           let imgDiv = document.createElement("div");
           imgDiv.setAttribute("class", "imgDiv");
           let img = document.createElement("img");
@@ -57,7 +76,7 @@ export function getImages(url,animationContainer,uniquesImages,imageContainer) {
           img.src = uniquesImages[key];
           img.alt = key;
           imgDiv.appendChild(img);
-          imageWrapper.appendChild(heading);
+          imageWrapper.appendChild(imgheading);
           imageWrapper.appendChild(imgDiv);
           imageContainer.appendChild(imageWrapper);
         }
@@ -66,12 +85,44 @@ export function getImages(url,animationContainer,uniquesImages,imageContainer) {
   );
 }
 
+export async function fetchImages(url){
+  const gallery = await fetch("http://localhost:3001/gallery", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ url }),
+    }).then((response) => {
+      if (response.ok) {
+        // console.log(response);
+        return response.json();
+      } else {
+        return "Error fetching data";
+      }
+    })
+    .then((data) => {
+      console.log("Images: ");
+      if(data==="Data not found"){
+        return data;
+      }
+      console.log(data);
+      return data;
+    })
+    .catch((error) => {
+      console.log(error);
+      return "Server not reachable";
+    });
+    return gallery;
+}
+
+
+
 // contains the formated data of summary or majorpoints which ever user gets first
 let textData = null;
 
 export function scrap(url, toScrap,animationContainer,headingMain) {
   console.log("text data is null " + textData);
-  console.log("2" + process.env.REACT_APP_Web_scrapper);
+  // console.log("2" + process.env.REACT_APP_Web_scrapper);
   if (textData === null) {
     chrome.runtime.sendMessage(
       {
@@ -86,13 +137,21 @@ export function scrap(url, toScrap,animationContainer,headingMain) {
         // console.log("object" + typeof response);
         console.log("Response ");
         console.log(response);
+        const heading = document.getElementById("headingScrapper");
         if (response === "Server not reachable") {
           let c = document.getElementById("responseText");
           animationContainer.remove();
           c.innerText = response;
+          heading.innerHTML = `Sorry:&#128532;`;
+          return;
+        }else if(response === "This data is not present in this webpage or they might have applied some additional security"){
+          let c = document.getElementById("responseText");
+          animationContainer.remove();
+          c.innerText = response;
+          heading.innerHTML = `Sorry:&#128532;`;
           return;
         }
-        const heading = document.getElementById("headingScrapper");
+        
         // const gallery = response[2];
         textData = response[0];
 
@@ -121,6 +180,7 @@ export function scrap(url, toScrap,animationContainer,headingMain) {
         // gallery = response[1];
         console.log("Response ");
         console.log(response);
+        const heading = document.getElementById("headingScrapper");
         if (response === "Server not reachable") {
           let c = document.getElementById("responseText");
           animationContainer.remove();
@@ -128,7 +188,6 @@ export function scrap(url, toScrap,animationContainer,headingMain) {
           return;
         }
         
-        const heading = document.getElementById("headingScrapper");
         textData = response[0];
         console.log("textdata " + textData);
         heading.innerHTML = `${headingMain}: &#x1F60A;`;
@@ -140,3 +199,50 @@ export function scrap(url, toScrap,animationContainer,headingMain) {
     );
   }
 }
+
+// if we are fetching data for the first time in that case we need to scrapp the data from the webpage
+export async function fetchScrappedDataFirstTime(url,API,isSummary){
+  const AIResponse = await fetch("http://localhost:3001/scrape", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ url }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log(response);
+          return response.json();
+        } else {
+          throw new Error("Error fetching data");
+        }
+      })
+      .then((data) => {
+        // Do something with the scraped data
+        if(data==="Data not found"){
+          return "This data is not present in this webpage or they might have applied some additional security";
+        }
+        console.log("Scraped Data:", data);
+        let rawData = data[0] + data[1];
+        // console.log("3"+message.API);
+        return AICall(rawData,API,isSummary);
+  
+    
+      }).then((result) => {
+        // const gallery = {};
+
+        const res = [result.gptAnswer,result.dataMain];
+        console.log("result where data is null ");
+        console.log(res);
+        return res;
+      })
+      .catch((error) => {
+        console.log(error);
+       return "Server not reachable";
+      });
+    // console.log("test");
+    // console.log(AIResponse);
+    return AIResponse;
+}
+
+

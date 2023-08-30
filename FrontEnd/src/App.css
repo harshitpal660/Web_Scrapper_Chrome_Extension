@@ -4,12 +4,17 @@
 }
 
 .container {
-    width: 15rem;
-    height: 15rem;
+    width: 10rem;
+    height: 5rem;
     background-color: rgb(167, 204, 167);
 }
 
 .buttons{
-    padding: 5px;
-    margin: 5px;
+    padding: 3px;
+    margin: 3px;
+    cursor: pointer;
 }
+
+/* .buttons:hover{
+
+} */
