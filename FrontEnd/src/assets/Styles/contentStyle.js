@@ -17,6 +17,11 @@ style.textContent = `
     cursor:pointer;
     background-color: rgb(204,38,83) !important;
   }
+  .extensionButton:hover{
+    transform: scale(1.1) !important;
+    background-color: rgb(82,217,234) !important;
+    box-shadow: 4px 4px 6px rgba(125,164,192,0.5); /* Horizontal offset, vertical offset, blur radius, color */
+  }
   #slider{
     background-color: rgb(214,235,252);
     display:flex;
@@ -40,10 +45,9 @@ style.textContent = `
     font-family: "Lucida Console", "Courier New", monospace !important;
 
   }
-  .aiData p{
+  p{
     color: white !important;
     display: inline-block !important;
-    white-space: nowrap !important;
   }
   .aiData h1{
     font-size: 30px !important;
@@ -73,15 +77,15 @@ style.textContent = `
 
   #animation{
     color: white !important;
-    width: 500px;
+    width: fit-content;
     /* animation properties */
     -moz-transform: translateX(100%);
     -webkit-transform: translateX(100%);
     transform: translateX(100%);
     
-    -moz-animation: my-animation 15s linear infinite;
-    -webkit-animation: my-animation 15s linear infinite;
-    animation: my-animation 15s linear infinite;
+    -moz-animation: my-animation 10s linear infinite;
+    -webkit-animation: my-animation 10s linear infinite;
+    animation: my-animation 10s linear infinite;
   }
   /* for Firefox */
 @-moz-keyframes my-animation {
@@ -106,6 +110,9 @@ style.textContent = `
     -webkit-transform: translateX(-100%);
     transform: translateX(-100%);
   }
+}
+#animation p{
+  white-space: nowrap;
 }
 
 #image-container{
@@ -169,10 +176,10 @@ style.textContent = `
 }
 
 #actionButtons{
-  position: fixed;
-  bottom: 10px;
+  position: relative;
+  // top: 100%;
   left:50%;
-  // transform:translate(-200%);
+  transform:translate(-50%);
   display:flex;
   flex-direction: row;
   flex-wrap: no-wrap;

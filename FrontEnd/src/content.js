@@ -1,11 +1,10 @@
-import { getImages,scrap } from "./utils";
-import { style } from "./contentStyle";
-
+import { getImages, scrap } from "./utils/helper";
+import { style } from "./assets/Styles/contentStyle";
 
 const url = window.location.href;
 
 // Contains all the images of the webpage
-let uniquesImages =  {};
+let uniquesImages = {};
 
 // heading data after apicalls
 let headingMain = null;
@@ -16,7 +15,7 @@ animationContainer.setAttribute("id", "animationContainer");
 const animation = document.createElement("div");
 animation.setAttribute("id", "animation");
 animation.innerHTML =
-  "<p>Fetching your data. . . &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp till then &#9749</p>";
+  "<p>Fetching your data. . . &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp till then &#9749 &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp Loading time depends on Data sometimes it may take around 10 min</p>";
 animationContainer.appendChild(animation);
 
 // applying style
@@ -29,19 +28,16 @@ p.setAttribute("id", "responseText");
 const divAIData = document.createElement("div");
 divAIData.setAttribute("class", "aiData");
 
-const closeCopyWrapper = document.createElement("div")
+const closeCopyWrapper = document.createElement("div");
 closeCopyWrapper.setAttribute("id", "actionButtons");
 
 const close = document.createElement("button");
-close.setAttribute("id","close");
-close.textContent = 'close';
+close.setAttribute("id", "close");
+close.textContent = "close";
 
 const copy = document.createElement("button");
-copy.setAttribute("id","copy");
-copy.textContent = 'copy';
-
-closeCopyWrapper.appendChild(close);
-closeCopyWrapper.appendChild(copy);
+copy.setAttribute("id", "copy");
+copy.textContent = "copy";
 
 const divWrapper = document.createElement("div");
 divWrapper.classList.add("wrapper");
@@ -54,18 +50,23 @@ divWrapper.innerHTML = `
 `;
 
 // image container
-const imageContainer = document.createElement('div');
-imageContainer.id = 'image-container';
+const imageContainer = document.createElement("div");
+imageContainer.id = "image-container";
 
 
-close.addEventListener("click",()=>{
+close.addEventListener("click", () => {
   divAIData.remove();
-})
+});
 
-
-close.addEventListener("click",()=>{
-  
-})
+copy.addEventListener("click", async () => {
+  const responsetext = document.getElementById("responseText");
+  const textToCopy = responsetext.textContent;
+  await navigator.clipboard.writeText(textToCopy);
+  copy.textContent = "copied!";
+  setTimeout(() => {
+    copy.textContent = "copy";
+  }, 2000);
+});
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message.action === "open") {
@@ -92,8 +93,10 @@ function displayButtons() {
     divAIData.appendChild(animationContainer);
     headingMain = "Summary";
     document.body.appendChild(divAIData);
+    closeCopyWrapper.appendChild(close);
+    closeCopyWrapper.appendChild(copy);
     divAIData.appendChild(closeCopyWrapper);
-    scrap(url, "summary",animationContainer,headingMain);
+    scrap(url, "summary", animationContainer, headingMain);
   });
 
   button2.addEventListener("click", () => {
@@ -104,22 +107,22 @@ function displayButtons() {
     divAIData.appendChild(animationContainer);
     headingMain = "Major Points";
     document.body.appendChild(divAIData);
+    closeCopyWrapper.appendChild(close);
+    closeCopyWrapper.appendChild(copy);
     divAIData.appendChild(closeCopyWrapper);
-    scrap(url, "points",animationContainer,headingMain);
+    scrap(url, "points", animationContainer, headingMain);
   });
 
-  button3.addEventListener("click", ()=>{
+  button3.addEventListener("click", () => {
     divAIData.setAttribute("id", "images");
     divAIData.innerHTML = `<h1 id="headingScrapper">Loading Images ... &#129300;</h1>`;
-    divAIData.appendChild(imageContainer);
     imageContainer.innerHTML = "";
     divAIData.appendChild(animationContainer);
     headingMain = "Gallery";
     document.body.appendChild(divAIData);
+    divAIData.appendChild(imageContainer);
+    closeCopyWrapper.appendChild(close);
     divAIData.appendChild(closeCopyWrapper);
-    getImages(url,animationContainer,uniquesImages,imageContainer);
-  })
+    getImages(url, animationContainer, uniquesImages, imageContainer);
+  });
 }
-
-
-

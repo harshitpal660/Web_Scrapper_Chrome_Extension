@@ -1,4 +1,4 @@
-import "./App.css"
+import "./assets/Styles/App.css"
 declare const chrome: any; 
 function App() {
 

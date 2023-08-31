@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
 // import { openAIapiSchema } from "./apiSchemaAi";
 import { option1,option2,option3 } from './option';
-import { cleanData,WordCount } from './utils';
+import { cleanData,WordCount } from './helper';
 
 
 
@@ -10,6 +10,7 @@ import { cleanData,WordCount } from './utils';
 // - Max 40000 tokens/min is allowed to send 
 //  -Max 3 req/min is allowed
 //  -Max 200 req/day is allowed
+let maxCalls  = 0; // we will go max 10 api calls
 export async function AICall(dataMain,APIkey,isSummary) {
   const openai = new OpenAI({
     apiKey: APIkey // This is also the default, can be omitted
@@ -19,7 +20,7 @@ export async function AICall(dataMain,APIkey,isSummary) {
   let final_array = [];
   console.log("Main "+WordCount(dataMain));
   try{
-    while(WordCount(final_array.join(" "))>1200 || final_array.length===0){
+    while(WordCount(final_array.join(" "))>1200 || final_array.length===0 && maxCalls<=10){
     // console.log("okkk");
     let data = final_array.join(" ");
     // console.log("data "+data);
@@ -60,6 +61,7 @@ export async function AICall(dataMain,APIkey,isSummary) {
     final_array = [...final_array_inside];
     // final_array = [...final_array_inside];
     console.log("final array "+WordCount(final_array.join(" ")));
+    maxCalls++; // incrementing calls
   }}catch(e){
     console.log("error "+e);
     final_array = [...final_array_inside];

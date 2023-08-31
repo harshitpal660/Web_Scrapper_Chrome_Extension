@@ -1,7 +1,6 @@
 // import { measureMemory } from "vm";
-import { AICall } from "./OpenAI";
-import { AICall2 } from "./testAICall";
-import { fetchImages,fetchScrappedDataFirstTime } from "./utils";
+import { AICall } from "./utils/OpenAI";
+import { fetchImages,fetchScrappedDataFirstTime } from "./utils/helper";
 console.log("backgroundReact");
 
 // fetching message command from App.tsxjs for opening and closing of buttons
@@ -30,6 +29,7 @@ chrome.runtime.onMessage.addListener(function b(message, sender, sendResponse) {
   // condition for getting images from NodeJs server
   if(message.task=="getImages"){
     const gallery = fetchImages(url);
+
     gallery.then((result)=>{
       console.log("gallery");
       console.log(result);

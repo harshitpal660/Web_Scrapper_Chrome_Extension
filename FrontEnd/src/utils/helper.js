@@ -1,6 +1,4 @@
 import { AICall } from "./OpenAI";
-import { AICall2 } from "./testAICall";
-
 
 export function WordCount(str) {
   return str.split(" ").length;
@@ -20,6 +18,7 @@ export function cleanData(str) {
   str = str.replaceAll("$", "");
   str = str.replaceAll("|", "");
   str = str.replaceAll("/n", "");
+  str = str.replace(/\[[^\]]+\]/g, '');
   str = str.replace(/[0-9]/g, ""); // to remove digits
   str = str.replace(/[^\x00-\x7F]/g, ""); // to remove other language than english
   str = str.replace(/\s+/g, " ").trim(); // remove unnecessary spaces
@@ -30,6 +29,7 @@ export function cleanData(str) {
 
 
 export function getImages(url,animationContainer,uniquesImages,imageContainer) {
+  // console.log("getImages");
   chrome.runtime.sendMessage(
     {
       task: "getImages",
@@ -37,7 +37,8 @@ export function getImages(url,animationContainer,uniquesImages,imageContainer) {
       url: url,
     },
     (response) => {
-      // console.log("res"+response);
+      console.log("getImages");
+      console.log(response);
       if(response === "Data not found"){
         animationContainer.remove();
         const heading = document.getElementById("headingScrapper");
@@ -54,6 +55,7 @@ export function getImages(url,animationContainer,uniquesImages,imageContainer) {
         return;
       }
 
+      console.log("success")
       for (let obj of response) {
         if (!uniquesImages.hasOwnProperty(obj.alt)) {
           uniquesImages[obj.alt] = obj.src;
@@ -63,6 +65,7 @@ export function getImages(url,animationContainer,uniquesImages,imageContainer) {
       const heading = document.getElementById("headingScrapper");
       heading.innerHTML = `Images: &#x1F60A;`;
       for (let key in uniquesImages) {
+        console.log("inside Image wapper");
         if (uniquesImages.hasOwnProperty(key)) {
           let imageWrapper = document.createElement("div");
           imageWrapper.setAttribute("class", "image-wrapper");
@@ -81,6 +84,7 @@ export function getImages(url,animationContainer,uniquesImages,imageContainer) {
           imageContainer.appendChild(imageWrapper);
         }
       }
+      console.log(uniquesImages);
     }
   );
 }
@@ -94,7 +98,7 @@ export async function fetchImages(url){
       body: JSON.stringify({ url }),
     }).then((response) => {
       if (response.ok) {
-        // console.log(response);
+        console.log("response ok");
         return response.json();
       } else {
         return "Error fetching data";

@@ -46,7 +46,11 @@ module.exports = {
           {
             loader: "file-loader",
             options: {
-              name: "Images/[name].[hash].[ext]", // Output path for images
+              name: "[name].[hash].[ext]", // Output path for images
+              outputPath:'Images',
+              publicPath:"./Images",
+              emitFile: true,
+              esModule:false
             },
           },
         ],
@@ -54,16 +58,30 @@ module.exports = {
     ],
   },
   plugins: [
+    // CopyPlugin is used to copy the file to the output directory "dist".
     new CopyPlugin({
       patterns: [{ from: "manifest.json", to: "../manifest.json" }],
     }),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: "src/Images/logo.png",
+          to({ context, absoluteFilename }) {
+            return "Images/[name][ext]";
+          },
+        },
+      ],
+    }),
+    // EnvironmentPlugin is used to expose environment variables to your application. In this case, it's setting the value of REACT_APP_Web_scrapper.
     new webpack.EnvironmentPlugin({
       REACT_APP_Web_scrapper: process.env.REACT_APP_Web_scrapper,
     }),
     ...getHtmlPlugins(["index"]),
   ],
+  // The resolve section specifies the extensions that Webpack should try when resolving module names. For example, when you import a TypeScript file, Webpack will automatically try adding .tsx, .ts, and .js extensions.
   resolve: {
     extensions: [".tsx", ".ts", ".js", ".png"],
+    // The fallback object specifies modules that should be used as fallbacks if certain Node.js built-in modules are not available in the browser environment. This is important because Chrome extensions run in a browser-like environment.
     fallback: {
       vm: require.resolve("vm-browserify"),
       fs: false, // Disable fs module usage
@@ -76,6 +94,7 @@ module.exports = {
   },
 };
 
+// This function generates instances of HTMLPlugin based on the provided chunks array. These plugins generate HTML files for each entry point, with corresponding JavaScript files included.
 function getHtmlPlugins(chunks) {
   return chunks.map(
     (chunk) =>
