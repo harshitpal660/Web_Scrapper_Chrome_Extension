@@ -70,7 +70,7 @@ style.textContent = `
     overflow: hidden !important;
     width: 100% !important;
     position: absolute !important;
-    top: 50% !important;
+    top: 90% !important;
     left:50% !important;
     transform: translate(-50%,-50%) !important;
   }
@@ -122,6 +122,7 @@ style.textContent = `
   padding:3px;
   color: white;
   justify-content:space-around;
+  // margin-top: 20px;
 }
 
 .image-wrapper:nth-child(even) {
@@ -177,7 +178,7 @@ style.textContent = `
 
 #actionButtons{
   position: relative;
-  // top: 100%;
+  // bottom: 5px;
   left:50%;
   transform:translate(-50%);
   display:flex;
@@ -186,5 +187,21 @@ style.textContent = `
   justify-content: center;
 }
 
-  
-`;
+.progress{
+  position: relative;
+  height: 10px;
+  width: 70%;
+  border: 2px solid #f4a261;
+  border-radius: 15px;
+  margin:auto;
+
+}
+.progress .color{
+  position: absolute;
+  background-color: #ffffff;
+  width: 0px;
+  height: 10px;
+  border-radius: 15px;
+  transition: width linear;
+}
+`

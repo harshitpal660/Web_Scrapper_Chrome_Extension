@@ -28,19 +28,20 @@ export function cleanData(str) {
 }
 
 
-export function getImages(url,animationContainer,uniquesImages,imageContainer) {
+export function getImages(url,animationContainer,uniquesImages,imageContainer,loadingColor) {
   // console.log("getImages");
-  chrome.runtime.sendMessage(
-    {
-      task: "getImages",
-      API: process.env.REACT_APP_Web_scrapper,
-      url: url,
-    },
-    (response) => {
-      console.log("getImages");
+  // console.log(loadingColor);
+  const Loader = document.getElementsByClassName("progress")[0];
+  loadingColor.style.width = "80%";
+  const result = fetchImages(url)
+  
+  result.then((response)=>{
+    loadingColor.style.width = "100%";
+    console.log("getImages");
       console.log(response);
       if(response === "Data not found"){
         animationContainer.remove();
+        Loader.remove();
         const heading = document.getElementById("headingScrapper");
 
         heading.innerHTML = `Sorry :&#128532;`;
@@ -48,6 +49,7 @@ export function getImages(url,animationContainer,uniquesImages,imageContainer) {
         return;
       }else if(response=== "Server not reachable"){
         animationContainer.remove();
+        Loader.remove()
         const heading = document.getElementById("headingScrapper");
 
         heading.innerHTML = `Sorry :&#128532;`;
@@ -56,12 +58,14 @@ export function getImages(url,animationContainer,uniquesImages,imageContainer) {
       }
 
       console.log("success")
+      console.log(response);
       for (let obj of response) {
         if (!uniquesImages.hasOwnProperty(obj.alt)) {
           uniquesImages[obj.alt] = obj.src;
         }
       }
       animationContainer.remove();
+      Loader.remove()
       const heading = document.getElementById("headingScrapper");
       heading.innerHTML = `Images: &#x1F60A;`;
       for (let key in uniquesImages) {
@@ -85,11 +89,12 @@ export function getImages(url,animationContainer,uniquesImages,imageContainer) {
         }
       }
       console.log(uniquesImages);
-    }
-  );
+  })
 }
+  // );
+// }
 
-export async function fetchImages(url){
+async function fetchImages(url){
   const gallery = await fetch("http://localhost:3001/gallery", {
       method: "POST",
       headers: {
@@ -98,6 +103,7 @@ export async function fetchImages(url){
       body: JSON.stringify({ url }),
     }).then((response) => {
       if (response.ok) {
+
         console.log("response ok");
         return response.json();
       } else {
@@ -116,6 +122,8 @@ export async function fetchImages(url){
       console.log(error);
       return "Server not reachable";
     });
+    console.log("GALLERY");
+    console.log(gallery);
     return gallery;
 }
 
@@ -124,9 +132,10 @@ export async function fetchImages(url){
 // contains the formated data of summary or majorpoints which ever user gets first
 let textData = null;
 
-export function scrap(url, toScrap,animationContainer,headingMain) {
+export function scrap(url, toScrap,animationContainer,headingMain,loadingColor) {
+  const Loader = document.getElementsByClassName("progress")[0];
   console.log("text data is null " + textData);
-  // console.log("2" + process.env.REACT_APP_Web_scrapper);
+  console.log("2" + process.env.REACT_APP_Web_scrapper);
   if (textData === null) {
     chrome.runtime.sendMessage(
       {
@@ -135,6 +144,7 @@ export function scrap(url, toScrap,animationContainer,headingMain) {
         API: process.env.REACT_APP_Web_scrapper,
         firstRender: textData,
         isSummary: toScrap,
+        Loader:Loader
       },
       (response) => {
         // textdata = response
@@ -155,7 +165,7 @@ export function scrap(url, toScrap,animationContainer,headingMain) {
           heading.innerHTML = `Sorry:&#128532;`;
           return;
         }
-        
+        loadingColor.style.width = "100%";
         // const gallery = response[2];
         textData = response[0];
 
@@ -164,6 +174,7 @@ export function scrap(url, toScrap,animationContainer,headingMain) {
         heading.innerHTML = `${headingMain}:&#x1F60A;`;
         let c = document.getElementById("responseText");
         animationContainer.remove();
+        Loader.remove();
         c.innerText = textData;
         textData = response[1]; // this step will store reduced data in textdata and not the summary or major points
       }
@@ -177,6 +188,7 @@ export function scrap(url, toScrap,animationContainer,headingMain) {
         API: process.env.REACT_APP_Web_scrapper,
         firstRender: textData,
         isSummary: toScrap,
+        Loader:Loader
       },
       (response) => {
         // textdata = response
@@ -188,6 +200,7 @@ export function scrap(url, toScrap,animationContainer,headingMain) {
         if (response === "Server not reachable") {
           let c = document.getElementById("responseText");
           animationContainer.remove();
+          Loader.remove();
           c.innerText = response;
           return;
         }
@@ -197,6 +210,7 @@ export function scrap(url, toScrap,animationContainer,headingMain) {
         heading.innerHTML = `${headingMain}: &#x1F60A;`;
         let c = document.getElementById("responseText");
         animationContainer.remove();
+        Loader.remove();
         c.innerText = textData;
         textData = response[1]; // this step will store reduced data in textdata and not the summary or major points
       }
@@ -205,7 +219,8 @@ export function scrap(url, toScrap,animationContainer,headingMain) {
 }
 
 // if we are fetching data for the first time in that case we need to scrapp the data from the webpage
-export async function fetchScrappedDataFirstTime(url,API,isSummary){
+export async function fetchScrappedDataFirstTime(url,API,isSummary,Loader){
+  console.log(Loader);
   const AIResponse = await fetch("http://localhost:3001/scrape", {
       method: "POST",
       headers: {
@@ -229,6 +244,7 @@ export async function fetchScrappedDataFirstTime(url,API,isSummary){
         console.log("Scraped Data:", data);
         let rawData = data[0] + data[1];
         // console.log("3"+message.API);
+        
         return AICall(rawData,API,isSummary);
   
     
@@ -249,4 +265,4 @@ export async function fetchScrappedDataFirstTime(url,API,isSummary){
     return AIResponse;
 }
 
-
+// console.log(process.env.REACT_APP_Web_scrapper2);

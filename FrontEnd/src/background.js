@@ -26,21 +26,9 @@ chrome.runtime.onMessage.addListener(function b(message, sender, sendResponse) {
   const url = message.url;
   console.log("url set");
 
-  // condition for getting images from NodeJs server
-  if(message.task=="getImages"){
-    const gallery = fetchImages(url);
-
-    gallery.then((result)=>{
-      console.log("gallery");
-      console.log(result);
-      sendResponse(result);
-    })
-    
-  }
-
   // condition for getting Summary/Major Points from NodeJs server and open AI Server
-  else if(message.firstRender === null && message.task==="sendUrl"){
-    const data = fetchScrappedDataFirstTime(url,message.API,message.isSummary)
+  if(message.firstRender === null && message.task==="sendUrl"){
+    const data = fetchScrappedDataFirstTime(url,message.API,message.isSummary,message.Loader)
     data.then((result)=>{
       console.log("Scrapped data first time");
       sendResponse(result);

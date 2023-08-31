@@ -1,6 +1,9 @@
 const express = require("express");
 const puppeteer = require("puppeteer");
 const app = express();
+const cors = require('cors'); // Import the cors package
+
+app.use(cors());
 
 app.use(express.json());
 app.post("/scrape", async (req, res) => {
