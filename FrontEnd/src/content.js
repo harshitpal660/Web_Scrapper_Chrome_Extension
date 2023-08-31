@@ -7,8 +7,6 @@ import { style } from "./assets/Styles/contentStyle";
 
 const url = window.location.href;
 
-// Contains all the images of the webpage
-let uniquesImages = {};
 
 // heading data after apicalls
 let headingMain = null;
@@ -144,8 +142,8 @@ function displayButtons() {
     headingMain = "Gallery";
     document.body.appendChild(divAIData);
     const loadingColor = document.querySelector(".progress .color");
-    // loadingColor.style.width = "30%";
+    loadingColor.style.width = "0%";
     divAIData.appendChild(imageContainer);
-    getImages(url, animationContainer, uniquesImages, imageContainer,loadingColor);
+    getImages(url, animationContainer, imageContainer,loadingColor);
   });
 }

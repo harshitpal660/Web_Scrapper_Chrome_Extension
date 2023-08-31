@@ -188,7 +188,10 @@ style.textContent = `
 }
 
 .progress{
-  position: relative;
+  position: absolute;
+  top:50%;
+  left:50%;
+  transform: translate(-50%,-50%);
   height: 10px;
   width: 70%;
   border: 2px solid #f4a261;
@@ -197,10 +200,7 @@ style.textContent = `
 
 }
 .progress .color{
-  position: absolute;
-  top:50%;
-  left:50%;
-  transform: translate(-50%,-50%);
+  position: relative;
   background-color: #ffffff;
   width: 0px;
   height: 10px;
