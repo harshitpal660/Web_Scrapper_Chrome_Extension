@@ -198,6 +198,9 @@ style.textContent = `
 }
 .progress .color{
   position: absolute;
+  top:50%;
+  left:50%;
+  transform: translate(-50%,-50%);
   background-color: #ffffff;
   width: 0px;
   height: 10px;

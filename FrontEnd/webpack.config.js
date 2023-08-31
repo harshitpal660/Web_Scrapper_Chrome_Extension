@@ -94,7 +94,7 @@ module.exports = {
     // The fallback object specifies modules that should be used as fallbacks if certain Node.js built-in modules are not available in the browser environment. This is important because Chrome extensions run in a browser-like environment.
     fallback: {
       // vm: require.resolve("vm-browserify"),
-      // fs: false, // Disable fs module usage
+      fs: false, // Disable fs module usage
       // path: require.resolve("path-browserify"),
     },
   },

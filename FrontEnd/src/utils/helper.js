@@ -1,3 +1,4 @@
+import { unlink } from "fs";
 import { AICall } from "./OpenAI";
 
 export function WordCount(str) {
@@ -32,11 +33,11 @@ export function getImages(url,animationContainer,uniquesImages,imageContainer,lo
   // console.log("getImages");
   // console.log(loadingColor);
   const Loader = document.getElementsByClassName("progress")[0];
-  loadingColor.style.width = "80%";
+  // loadingColor.style.width = "80%";
   const result = fetchImages(url)
   
   result.then((response)=>{
-    loadingColor.style.width = "100%";
+    
     console.log("getImages");
       console.log(response);
       if(response === "Data not found"){
@@ -59,33 +60,63 @@ export function getImages(url,animationContainer,uniquesImages,imageContainer,lo
 
       console.log("success")
       console.log(response);
+
+      // const keys = Object.keys(uniquesImages);
+      // console.log(keys.length);
+      let count = 0;
+      let delay = null;
+      if(response.length<=5){
+        delay = 1000;
+      }else if(response.length>5 && response.length<=10){
+        delay = 700;
+      }else if(response.length>10 && response.length<=20){
+        delay = 500;
+      }else{
+        delay = 200;
+      }
+      let uniqueTotal = 0; // to find pecentage as responce has multiple images
       for (let obj of response) {
         if (!uniquesImages.hasOwnProperty(obj.alt)) {
-          uniquesImages[obj.alt] = obj.src;
+          uniqueTotal++;
         }
       }
-      animationContainer.remove();
-      Loader.remove()
+      const interval = setInterval(()=>{
+        if (!uniquesImages.hasOwnProperty(response[count].alt)) {
+          console.log("inside Image wapper "+((count+1)/uniqueTotal)*100);
+          loadingColor.style.width = ((count+1)/uniqueTotal)*100 +"%";
+          uniquesImages[response[count].alt] = response[count].src;
+          count++;
+          if (count === uniqueTotal ) {
+            
+            animationContainer.remove();
+            Loader.remove();
+            clearInterval(interval);
+          }
+        }
+      },delay);
+      
+      
       const heading = document.getElementById("headingScrapper");
       heading.innerHTML = `Images: &#x1F60A;`;
-      for (let key in uniquesImages) {
-        console.log("inside Image wapper");
-        if (uniquesImages.hasOwnProperty(key)) {
-          let imageWrapper = document.createElement("div");
-          imageWrapper.setAttribute("class", "image-wrapper");
-          let imgheading = document.createElement("h3");
-          imgheading.setAttribute("class", "imgHeading");
-          imgheading.innerText = key;
-          let imgDiv = document.createElement("div");
-          imgDiv.setAttribute("class", "imgDiv");
-          let img = document.createElement("img");
-          img.setAttribute("class", "image");
-          img.src = uniquesImages[key];
-          img.alt = key;
-          imgDiv.appendChild(img);
-          imageWrapper.appendChild(imgheading);
-          imageWrapper.appendChild(imgDiv);
-          imageContainer.appendChild(imageWrapper);
+      
+      
+      for (let obj of response) {
+        if (uniquesImages.hasOwnProperty(obj.alt)) {
+            let imageWrapper = document.createElement("div");
+            imageWrapper.setAttribute("class", "image-wrapper");
+            let imgheading = document.createElement("h3");
+            imgheading.setAttribute("class", "imgHeading");
+            imgheading.innerText = keys[count];
+            let imgDiv = document.createElement("div");
+            imgDiv.setAttribute("class", "imgDiv");
+            let img = document.createElement("img");
+            img.setAttribute("class", "image");
+            img.src = uniquesImages[obj.alt];
+            img.alt = obj.alt;
+            imgDiv.appendChild(img);
+            imageWrapper.appendChild(imgheading);
+            imageWrapper.appendChild(imgDiv);
+            imageContainer.appendChild(imageWrapper);
         }
       }
       console.log(uniquesImages);

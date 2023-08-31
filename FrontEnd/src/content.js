@@ -144,7 +144,7 @@ function displayButtons() {
     headingMain = "Gallery";
     document.body.appendChild(divAIData);
     const loadingColor = document.querySelector(".progress .color");
-    loadingColor.style.width = "30%";
+    // loadingColor.style.width = "30%";
     divAIData.appendChild(imageContainer);
     getImages(url, animationContainer, uniquesImages, imageContainer,loadingColor);
   });
