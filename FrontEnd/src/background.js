@@ -1,7 +1,7 @@
 // import { measureMemory } from "vm";
 import { AICall } from "./utils/OpenAI";
-import { fetchImages,fetchScrappedDataFirstTime } from "./utils/helper";
-console.log("backgroundReact");
+import { fetchScrappedDataFirstTime } from "./utils/helper";
+// console.log("backgroundReact");
 
 // fetching message command from App.tsxjs for opening and closing of buttons
 chrome.runtime.onMessage.addListener(function a(message) {
@@ -18,6 +18,12 @@ chrome.runtime.onMessage.addListener(function a(message) {
       chrome.tabs.sendMessage(activeTabId, { action: "close" });
     });
   }
+  // else if(message.action === "updateProgress"){
+  //   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+  //     const activeTab = tabs[0];
+  //     chrome.tabs.sendMessage(activeTab.id, { task: "updateProgress", percentage:message.percentage });
+  //   });
+  // }
 });
 
 // fetching message command from content.js for fetching Summary, major points and Images 
@@ -28,7 +34,10 @@ chrome.runtime.onMessage.addListener(function b(message, sender, sendResponse) {
 
   // condition for getting Summary/Major Points from NodeJs server and open AI Server
   if(message.firstRender === null && message.task==="sendUrl"){
-    const data = fetchScrappedDataFirstTime(url,message.API,message.isSummary,message.Loader)
+    console.log("backgroundReact");
+    // console.log(message.Loader);
+    // console.log(message.loadingColor);
+    const data = fetchScrappedDataFirstTime(url,message.API,message.isSummary)
     data.then((result)=>{
       console.log("Scrapped data first time");
       sendResponse(result);
@@ -39,7 +48,9 @@ chrome.runtime.onMessage.addListener(function b(message, sender, sendResponse) {
 // here i will not do scrapping as it was the not the first time, and we have previously scrapped data stored in message.firstRender
 // we will directly send it to open ai
   else if (message.firstRender !== null  && message.task==="sendUrl") {
-
+    console.log("backgroundReact");
+    // console.log(message.Loader);
+    // console.log(message.loadingColor);
     // Open ai api call
       const screenData = AICall(message.firstRender, message.API, message.isSummary);
 

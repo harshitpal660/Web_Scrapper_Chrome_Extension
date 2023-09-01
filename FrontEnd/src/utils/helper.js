@@ -1,12 +1,13 @@
 import { unlink } from "fs";
 import { AICall } from "./OpenAI";
 
-
 export function WordCount(str) {
   return str.split(" ").length;
 }
 
+
 export function cleanData(str) {
+  
   console.log("before cleaning" + WordCount(str));
   str = str.replaceAll(",", "");
   str = str.replaceAll("+", "");
@@ -20,11 +21,13 @@ export function cleanData(str) {
   str = str.replaceAll("$", "");
   str = str.replaceAll("|", "");
   str = str.replaceAll("/n", "");
-  str = str.replace(/\[[^\]]+\]/g, "");
+  str = str.replace(/\b\w+\.\w+\b/g,"") // removes words which contains . in between
+  str = str.replace(/\[[^\]]*\]/g, ""); // remove content within square braces with brackets as well
   str = str.replace(/[0-9]/g, ""); // to remove digits
   str = str.replace(/[^\x00-\x7F]/g, ""); // to remove other language than english
   str = str.replace(/\s+/g, " ").trim(); // remove unnecessary spaces
-  str = str.replace(/\([^)]*\)/g, ""); // remove content within parentheses
+  str = str.replace(/\([^)]*\)/g, ""); // remove content within parentheses with brackets as well
+  str = str.replace(/\{.*?\}/g, '');  // remove content within curly braces with brackets as well
   console.log("after cleaning" + WordCount(str));
   return str;
 }
@@ -44,7 +47,7 @@ export function getImages(
   result.then((response) => {
     console.log("getImages");
     console.log(response);
-    if (response === "Data not found") {
+    if (response === "Data not found" || response === "Ërror fetching data") {
       animationContainer.remove();
       Loader.remove();
       const heading = document.getElementById("headingScrapper");
@@ -83,43 +86,55 @@ export function getImages(
     let uniqueTotal = 0; // to find pecentage as responce has multiple images
     for (let obj of response) {
       if (!uniquesImages.hasOwnProperty(obj.alt)) {
+        console.log("obj.alt");
+        console.log(obj.alt);
+        uniquesImages[obj.alt] = null;
         uniqueTotal++;
       }
     }
+    uniquesImages = {};
     console.log(uniqueTotal);
     const interval = setInterval(() => {
-      if (!uniquesImages.hasOwnProperty(response[count].alt)) {
-        console.log("inside Image wapper " + ((count + 1) / uniqueTotal) * 100);
-        loadingColor.style.width = ((count + 1) / uniqueTotal) * 100 + "%";
-        uniquesImages[response[count].alt] = response[count].src;
-        count++;
-        if (count === uniqueTotal) {
+      try {
+        if (!uniquesImages.hasOwnProperty(response[count].alt)) {
           console.log(uniquesImages);
-          animationContainer.remove();
-          Loader.remove();
-          clearInterval(interval);
-          const heading = document.getElementById("headingScrapper");
-          heading.innerHTML = `Images: &#x1F60A;`;
+          console.log(response[count].alt);
+          console.log(
+            "inside Image wapper " + ((count + 1) / uniqueTotal) * 100
+          );
+          loadingColor.style.width = ((count + 1) / uniqueTotal) * 100 + "%";
+          uniquesImages[response[count].alt] = response[count].src;
+          count++;
+          if (count === uniqueTotal) {
+            console.log(uniquesImages);
+            animationContainer.remove();
+            Loader.remove();
+            clearInterval(interval);
+            const heading = document.getElementById("headingScrapper");
+            heading.innerHTML = `Images: &#x1F60A;`;
 
-          for (let key in uniquesImages) {
-            let imageWrapper = document.createElement("div");
-            imageWrapper.setAttribute("class", "image-wrapper");
-            let imgheading = document.createElement("h3");
-            imgheading.setAttribute("class", "imgHeading");
-            imgheading.innerText = key;
-            let imgDiv = document.createElement("div");
-            imgDiv.setAttribute("class", "imgDiv");
-            let img = document.createElement("img");
-            img.setAttribute("class", "image");
-            img.src = uniquesImages[key];
-            img.alt = key;
-            imgDiv.appendChild(img);
-            imageWrapper.appendChild(imgheading);
-            imageWrapper.appendChild(imgDiv);
-            imageContainer.appendChild(imageWrapper);
+            for (let key in uniquesImages) {
+              let imageWrapper = document.createElement("div");
+              imageWrapper.setAttribute("class", "image-wrapper");
+              let imgheading = document.createElement("h3");
+              imgheading.setAttribute("class", "imgHeading");
+              imgheading.innerText = key;
+              let imgDiv = document.createElement("div");
+              imgDiv.setAttribute("class", "imgDiv");
+              let img = document.createElement("img");
+              img.setAttribute("class", "image");
+              img.src = uniquesImages[key];
+              img.alt = key;
+              imgDiv.appendChild(img);
+              imageWrapper.appendChild(imgheading);
+              imageWrapper.appendChild(imgDiv);
+              imageContainer.appendChild(imageWrapper);
+            }
           }
-          console.log(uniquesImages);
         }
+      } catch (e) {
+        console.log(e);
+        // console.log(uniquesImages);
       }
     }, delay);
   });
@@ -168,11 +183,14 @@ export function scrap(
   toScrap,
   animationContainer,
   headingMain,
-  loadingColor
 ) {
-  const Loader = document.getElementsByClassName("progress")[0];
   console.log("text data is null " + textData);
   console.log("2" + process.env.REACT_APP_Web_scrapper);
+  const Loader = document.getElementsByClassName("progress")[0];
+  const loadingColor = document.querySelector(".progress .color");
+  console.log("Helper.js");
+  console.log(Loader);
+  console.log(loadingColor);
   if (textData === null) {
     chrome.runtime.sendMessage(
       {
@@ -181,7 +199,6 @@ export function scrap(
         API: process.env.REACT_APP_Web_scrapper,
         firstRender: textData,
         isSummary: toScrap,
-        Loader: Loader,
       },
       (response) => {
         // textdata = response
@@ -192,6 +209,7 @@ export function scrap(
         if (response === "Server not reachable") {
           let c = document.getElementById("responseText");
           animationContainer.remove();
+          Loader.remove();
           c.innerText = response;
           heading.innerHTML = `Sorry:&#128532;`;
           return;
@@ -201,11 +219,12 @@ export function scrap(
         ) {
           let c = document.getElementById("responseText");
           animationContainer.remove();
+          Loader.remove();
           c.innerText = response;
           heading.innerHTML = `Sorry:&#128532;`;
           return;
         }
-        loadingColor.style.width = "100%";
+        // loadingColor.style.width = "100%";
         // const gallery = response[2];
         textData = response[0];
 
@@ -228,7 +247,8 @@ export function scrap(
         API: process.env.REACT_APP_Web_scrapper,
         firstRender: textData,
         isSummary: toScrap,
-        Loader: Loader,
+        loadingColor: loadingColor,
+        Loader:Loader
       },
       (response) => {
         // textdata = response
@@ -259,8 +279,12 @@ export function scrap(
 }
 
 // if we are fetching data for the first time in that case we need to scrapp the data from the webpage
-export async function fetchScrappedDataFirstTime(url, API, isSummary, Loader) {
-  console.log(Loader);
+export async function fetchScrappedDataFirstTime(
+  url,
+  API,
+  isSummary,
+) {
+  // console.log(Loader);
   const AIResponse = await fetch("http://localhost:3001/scrape", {
     method: "POST",
     headers: {

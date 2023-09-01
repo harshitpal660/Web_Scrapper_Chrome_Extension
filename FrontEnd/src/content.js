@@ -108,7 +108,8 @@ function displayButtons() {
     headingMain = "Summary";
     document.body.appendChild(divAIData);
     const loadingColor = document.querySelector(".progress .color");
-    scrap(url, "summary", animationContainer, headingMain,loadingColor);
+    updateProgressBar(0);
+    scrap(url, "summary", animationContainer, headingMain);
   });
 
   button2.addEventListener("click", () => {
@@ -126,7 +127,8 @@ function displayButtons() {
     headingMain = "Major Points";
     document.body.appendChild(divAIData);
     const loadingColor = document.querySelector(".progress .color");
-    scrap(url, "points", animationContainer, headingMain,loadingColor);
+    updateProgressBar(0);
+    scrap(url, "points", animationContainer, headingMain);
   });
 
   button3.addEventListener("click", () => {
@@ -142,8 +144,22 @@ function displayButtons() {
     headingMain = "Gallery";
     document.body.appendChild(divAIData);
     const loadingColor = document.querySelector(".progress .color");
-    loadingColor.style.width = "0%";
+    updateProgressBar(0);
     divAIData.appendChild(imageContainer);
     getImages(url, animationContainer, imageContainer,loadingColor);
   });
 }
+
+// Function to update the progress bar
+function updateProgressBar(percentage) {
+  const progressBar = document.querySelector(".progress .color");
+  progressBar.style.width = percentage + "%";
+}
+
+// Listen for messages from the background script
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.task === "updateProgress") {
+    const { percentage } = message;
+    updateProgressBar(percentage);
+  }
+});
