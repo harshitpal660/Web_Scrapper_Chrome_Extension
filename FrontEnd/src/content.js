@@ -76,16 +76,22 @@ copy.addEventListener("click", async () => {
   }, 2000);
 });
 
-chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-  if (message.action === "open") {
-    console.log("opened");
-    displayButtons();
-  } else {
-    console.log("closed");
-    divWrapper.remove();
-  }
-});
-
+// document.addEventListener("DOMContentLoaded", function () {
+  // Add your message listener here
+  chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+    console.log("cont");
+    if (message.action === "open") {
+      console.log("opened");
+      displayButtons();
+    } else if (message.action === "updateProgress") {
+      const { percentage } = message;
+      updateProgressBar(percentage);
+    } else {
+      console.log("closed");
+      divWrapper.remove();
+    }
+  });
+// });
 function displayButtons() {
   document.body.appendChild(divWrapper);
   // const slider = document.getElementById("slider");
@@ -107,7 +113,6 @@ function displayButtons() {
     divAIData.appendChild(animationContainer);
     headingMain = "Summary";
     document.body.appendChild(divAIData);
-    const loadingColor = document.querySelector(".progress .color");
     updateProgressBar(0);
     scrap(url, "summary", animationContainer, headingMain);
   });
@@ -126,7 +131,6 @@ function displayButtons() {
     divAIData.appendChild(animationContainer);
     headingMain = "Major Points";
     document.body.appendChild(divAIData);
-    const loadingColor = document.querySelector(".progress .color");
     updateProgressBar(0);
     scrap(url, "points", animationContainer, headingMain);
   });
@@ -156,10 +160,14 @@ function updateProgressBar(percentage) {
   progressBar.style.width = percentage + "%";
 }
 
-// Listen for messages from the background script
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.task === "updateProgress") {
-    const { percentage } = message;
-    updateProgressBar(percentage);
-  }
-});
+// chrome.runtime.onConnect.addListener((port) => {
+//   if (port.name === 'loaderPort') {
+//     // Listen for messages through the port
+//     port.onMessage.addListener((message) => {
+//       if (message.action === 'updateProgress') {
+//         const { percentage } = message;
+//         updateProgressBar(percentage);
+//       }
+//     });
+//   }
+// });

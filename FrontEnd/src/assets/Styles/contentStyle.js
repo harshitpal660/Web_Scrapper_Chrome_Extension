@@ -208,3 +208,29 @@ style.textContent = `
   transition: width linear;
 }
 `
+
+// let i = 0;
+
+// function delayedLog() {
+//   console.log(i);
+// }
+
+// while (i < 5) {
+//   setTimeout(delayedLog, 1000);
+//   i++;
+// }
+
+
+// console.log("Loop finished");
+
+
+// async function example() {
+//   console.log("Start");
+//   await new Promise((resolve) => setTimeout(resolve, 1000));
+//   console.log("End");
+// }
+
+// example();
+
+
+

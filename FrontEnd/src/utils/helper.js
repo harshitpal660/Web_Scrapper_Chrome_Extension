@@ -21,6 +21,7 @@ export function cleanData(str) {
   str = str.replaceAll("$", "");
   str = str.replaceAll("|", "");
   str = str.replaceAll("/n", "");
+  str = str.replace(/\?/g, '');
   str = str.replace(/\b\w+\.\w+\b/g,"") // removes words which contains . in between
   str = str.replace(/\[[^\]]*\]/g, ""); // remove content within square braces with brackets as well
   str = str.replace(/[0-9]/g, ""); // to remove digits
@@ -194,7 +195,7 @@ export function scrap(
   if (textData === null) {
     chrome.runtime.sendMessage(
       {
-        task: "sendUrl",
+        action: "sendUrl",
         url: url,
         API: process.env.REACT_APP_Web_scrapper,
         firstRender: textData,
@@ -242,7 +243,7 @@ export function scrap(
     console.log("inside else");
     chrome.runtime.sendMessage(
       {
-        task: "sendUrl",
+        action: "sendUrl",
         url: url,
         API: process.env.REACT_APP_Web_scrapper,
         firstRender: textData,
