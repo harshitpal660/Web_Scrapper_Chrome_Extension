@@ -156,24 +156,24 @@ style.textContent = `
   padding:0;
 }
 #webScrapperClose{
-  width: fit-content; /* Set a width and height to make it round */
+  width: fit-content; 
   height: 20px;
-  border-radius: 5%; /* This creates the round shape */
-  background-color: rgb(253,0,0); /* Background color of the button */
-  color: rgb(32,33,36); /* Text color */
-  border: none; /* No border */
-  cursor: pointer; /* Show pointer cursor on hover */
+  border-radius: 5%; 
+  background-color: rgb(253,0,0); 
+  color: rgb(32,33,36);
+  border: none; 
+  cursor: pointer; 
   text-align: center;
   margin:10px;
 }
 #webScrapperCopy{
-  width: fit-content; /* Set a width and height to make it round */
+  width: fit-content;
   height: 20px;
-  border-radius: 5%; /* This creates the round shape */
-  background-color: rgb(51,167,82); /* Background color of the button */
-  color: rgb(32,33,36); /* Text color */
-  border: none; /* No border */
-  cursor: pointer; /* Show pointer cursor on hover */
+  border-radius: 5%;
+  background-color: rgb(51,167,82); 
+  color: rgb(32,33,36);
+  border: none; 
+  cursor: pointer; 
   text-align: center;
   margin:10px;
 }
@@ -194,17 +194,20 @@ style.textContent = `
   top:50%;
   left:50%;
   transform: translate(-50%,-50%);
-  height: 10px;
+  height: 12px;
   width: 70%;
-  border: 2px solid #f4a261;
+  border: 1px solid #f4a261;
   border-radius: 15px;
   margin:auto;
   background-color: #696b6a;
+  display: flex;
+  justify-content: left;
+
 
 }
 .webScrapperProgress .webScrapperColor{
   position: relative;
-  background-color: #d45d77;
+  background-color: #f01d1d;
   width: 0px;
   height: 10px;
   border-radius: 15px;

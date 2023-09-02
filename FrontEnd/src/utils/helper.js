@@ -36,7 +36,6 @@ export function getImages(
   url,
   animationContainer,
   imageContainer,
-  tabID
 ) {
   // console.log("getImages");
   // console.log(loadingColor);
@@ -185,7 +184,6 @@ export function scrap(
   toScrap,
   animationContainer,
   headingMain,
-  tabID
 ) {
   console.log("text data is null " + textData);
   // console.log("2" + process.env.REACT_APP_Web_scrapper);
@@ -202,7 +200,6 @@ export function scrap(
         API: process.env.REACT_APP_Web_Scrapper,
         firstRender: textData,
         isSummary: toScrap,
-        tabID
       },
       (response) => {
         // textdata = response
@@ -251,7 +248,6 @@ export function scrap(
         API: process.env.REACT_APP_Web_Scrapper,
         firstRender: textData,
         isSummary: toScrap,
-        tabID
       },
       (response) => {
         // textdata = response

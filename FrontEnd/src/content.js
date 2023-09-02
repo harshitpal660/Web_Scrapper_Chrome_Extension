@@ -90,13 +90,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     divWrapper.remove();
   }
 });
-// getCurrentTabId((tabID) => {
-//   if (tabID !== null) {
-//     console.log(tabID);
-//   } else {
-//     console.error("No active tab found.");
-//   }
-// });
 function displayButtons() {
   document.body.appendChild(divWrapper);
   // const slider = document.getElementById("slider");
@@ -104,7 +97,6 @@ function displayButtons() {
   const button1 = document.getElementsByClassName("webScrapperExtensionButton")[0];
   const button2 = document.getElementsByClassName("webScrapperExtensionButton")[1];
   const button3 = document.getElementsByClassName("webScrapperExtensionButton")[2];
-  const currentTabId = null   // getting this id to increase loader value from background.js in content.js because while loading if we change tabs then it won't work properly
 
   button1.addEventListener("click", () => {
     divAIData.setAttribute("id", "webScrapperSummary");
@@ -121,7 +113,7 @@ function displayButtons() {
     headingMain = "Summary";
     document.body.appendChild(divAIData);
     updateProgressBar(0);
-    scrap(url, "summary", animationContainer, headingMain,currentTabId);
+    scrap(url, "summary", animationContainer, headingMain);
   });
 
   button2.addEventListener("click", () => {
@@ -139,7 +131,7 @@ function displayButtons() {
     headingMain = "Major Points";
     document.body.appendChild(divAIData);
     updateProgressBar(0);
-    scrap(url, "points", animationContainer, headingMain,currentTabId);
+    scrap(url, "points", animationContainer, headingMain);
   });
 
   button3.addEventListener("click", () => {
@@ -156,7 +148,7 @@ function displayButtons() {
     document.body.appendChild(divAIData);
     updateProgressBar(0);
     divAIData.appendChild(imageContainer);
-    getImages(url, animationContainer, imageContainer,currentTabId);
+    getImages(url, animationContainer, imageContainer);
   });
 }
 
@@ -165,15 +157,3 @@ function updateProgressBar(percentage) {
   const progressBar = document.querySelector(".webScrapperProgress .webScrapperColor");
   progressBar.style.width = percentage + "%";
 }
-
-
-// function getCurrentTabId(callback) {
-//   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-//     if (tabs.length > 0) {
-//       const currentTabId = tabs[0].id;
-//       callback(currentTabId);
-//     } else {
-//       callback(null); // Handle the case when no active tab is found
-//     }
-//   });
-// }
