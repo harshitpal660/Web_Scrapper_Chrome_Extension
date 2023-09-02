@@ -57,9 +57,11 @@ export async function AICall(dataMain, APIkey, isSummary) {
         console.log("chunk " + WordCount(chunk));
         option2.messages[1].content = chunk;
         // console.log(chunk);
-        updateLoader(percentage);
-        let chatCompletion = await openai.chat.completions.create(option2);
         
+        let chatCompletion = await openai.chat.completions.create(option2);
+        setTimeout(()=>{
+          updateLoader(percentage);
+        },500) 
         let gptAnswer = chatCompletion.choices[0].message.content;
         final_array_inside.push(gptAnswer);
         console.log("reply " + WordCount(gptAnswer));
@@ -84,8 +86,10 @@ export async function AICall(dataMain, APIkey, isSummary) {
   } catch (e) {
     console.log("error " + e);
     percentage = 90;
-    updateLoader(percentage)
-    final_array = [...final_array_inside];
+    setTimeout(()=>{
+      updateLoader(percentage);
+    },500) 
+    // final_array = [...final_array_inside];
     dataMain = final_array.slice(0, 1000).join(" ");
 
     return LastCall(openai, dataMain, isSummary);
@@ -104,6 +108,10 @@ async function LastCall(openai, dataMain, isSummary) {
   const percentage = 100;
   // console.log("loadingColor");
   // console.log(loadingColor);
+  setTimeout(()=>{
+    updateLoader(percentage);
+  },500) 
+  
   if (isSummary === "summary") {
     option1.messages.push({ role: "user", content: dataMain });
     let chatCompletion = await openai.chat.completions.create(option1);
@@ -112,7 +120,7 @@ async function LastCall(openai, dataMain, isSummary) {
     // const Total_chunks = final_array.length;
     console.log("Main of Summary" + WordCount(dataMain));
     console.log("gptAnswer of Summary" + WordCount(gptAnswer));
-    updateLoader(percentage);
+    
     return { gptAnswer, dataMain };
   } else {
     option3.messages.push({ role: "user", content: dataMain });
@@ -123,7 +131,6 @@ async function LastCall(openai, dataMain, isSummary) {
     console.log("Main of Points" + WordCount(dataMain));
     console.log("gptAnswer of Points" + WordCount(gptAnswer));
 
-    updateLoader(percentage);
     return { gptAnswer, dataMain };
   }
 }

@@ -45,7 +45,7 @@ style.textContent = `
     font-family: "Lucida Console", "Courier New", monospace !important;
 
   }
-  p{
+  responseText{
     color: white !important;
     display: inline-block !important;
   }
@@ -197,11 +197,12 @@ style.textContent = `
   border: 2px solid #f4a261;
   border-radius: 15px;
   margin:auto;
+  background-color: #696b6a;
 
 }
 .progress .color{
   position: relative;
-  background-color: #ffffff;
+  background-color: #d45d77;
   width: 0px;
   height: 10px;
   border-radius: 15px;
