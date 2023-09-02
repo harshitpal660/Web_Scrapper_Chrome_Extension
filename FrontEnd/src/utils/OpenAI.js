@@ -26,7 +26,7 @@ export async function AICall(dataMain, APIkey, isSummary) {
   let percentage = 0;
   try {
     while (
-      WordCount((final_array.join(" ")) > 1200 ||
+      (WordCount(final_array.join(" ")) > 1200 ||
       final_array.length === 0) && (callsTillnow <= maxCalls)
     ) {
       // console.log("okkk");

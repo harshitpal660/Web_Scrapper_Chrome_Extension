@@ -4,7 +4,7 @@ import { fetchScrappedDataFirstTime } from "./utils/helper";
 // console.log("backgroundReact");
 
 // fetching message command from App.tsxjs for opening and closing of buttons
-chrome.runtime.onMessage.addListener(function a(message) {
+chrome.runtime.onMessage.addListener(function a(message,sender,sendResponse) {
   if (message.action === "openContent") {
     // Send a message to the active tab's content script
     console.log("open");

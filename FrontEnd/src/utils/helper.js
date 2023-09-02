@@ -186,7 +186,7 @@ export function scrap(
   headingMain,
 ) {
   console.log("text data is null " + textData);
-  console.log("2" + process.env.REACT_APP_Web_scrapper);
+  // console.log("2" + process.env.REACT_APP_Web_scrapper);
   const Loader = document.getElementsByClassName("progress")[0];
   const loadingColor = document.querySelector(".progress .color");
   console.log("Helper.js");
@@ -197,7 +197,7 @@ export function scrap(
       {
         action: "sendUrl",
         url: url,
-        API: process.env.REACT_APP_Web_scrapper,
+        API: process.env.REACT_APP_Web_Scrapper,
         firstRender: textData,
         isSummary: toScrap,
       },
@@ -245,7 +245,7 @@ export function scrap(
       {
         action: "sendUrl",
         url: url,
-        API: process.env.REACT_APP_Web_scrapper,
+        API: process.env.REACT_APP_Web_Scrapper,
         firstRender: textData,
         isSummary: toScrap,
         loadingColor: loadingColor,

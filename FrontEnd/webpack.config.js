@@ -84,7 +84,7 @@ module.exports = {
     }),
     // EnvironmentPlugin is used to expose environment variables to your application. In this case, it's setting the value of REACT_APP_Web_scrapper.
     new webpack.EnvironmentPlugin({
-      REACT_APP_Web_scrapper: process.env.REACT_APP_Web_scrapper2,
+      REACT_APP_Web_Scrapper: process.env.REACT_APP_Web_Scrapper,
     }),
     ...getHtmlPlugins(["index"]),
   ],
