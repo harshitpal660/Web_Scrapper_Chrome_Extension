@@ -29,7 +29,7 @@ style.textContent = `
     flex-wrap: nowrap;
   }
   .webScrapperAiData{
-    height: 70% !important;
+    height: 800px !important;
     width: 95% !important;
     top: 100px !important;
     left:50% !important;

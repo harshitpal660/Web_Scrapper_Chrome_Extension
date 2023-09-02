@@ -22,15 +22,18 @@ chrome.runtime.onMessage.addListener(function a(message, sender, sendResponse) {
   else if(message.action ==="sendUrl"){
     if (message.firstRender === null && message.action === "sendUrl") {
       const url = message.url;
-      console.log("backgroundReact");
-      const data = fetchScrappedDataFirstTime(url, message.API, message.isSummary,message.tabID)
+      const tabID = sender.tab.id
+      console.log("backgroundReact " + tabID);
+      const data = fetchScrappedDataFirstTime(url, message.API, message.isSummary,tabID)
       data.then((result) => {
         console.log("Scrapped data first time");
         sendResponse(result);
       })
   
     } else if (message.firstRender !== null && message.action === "sendUrl") {
-      const screenData = AICall(message.firstRender, message.API, message.isSummary,message.tabID);
+      const tabID = sender.tab.id
+      console.log("backgroundReact " + tabID);
+      const screenData = AICall(message.firstRender, message.API, message.isSummary,tabID);
   
       screenData.then((result) => {
         const res = [result.gptAnswer, result.dataMain];

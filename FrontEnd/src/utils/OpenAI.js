@@ -82,7 +82,7 @@ export async function AICall(dataMain, APIkey, isSummary,tabID) {
     // final_array = [...final_array_inside];
     dataMain = final_array.slice(0, 1000).join(" ");
 
-    return LastCall(openai, dataMain, isSummary, loadingColor);
+    return LastCall(openai, dataMain, isSummary);
   }
 
   dataMain = final_array.join(" ");
@@ -126,5 +126,6 @@ async function LastCall(openai, dataMain, isSummary) {
 
 
 function updateLoader(percentage,tabID){
+  console.log("tabId "+tabID);
   chrome.tabs.sendMessage(tabID, { action: "updateProgress", percentage: percentage });
 }

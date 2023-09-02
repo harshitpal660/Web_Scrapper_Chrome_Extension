@@ -81,7 +81,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     console.log("opened");
     displayButtons();
   }else if(message.action === "updateProgress") {
-    console.log("insideUpdateProgress");
+    console.log("insideUpdateProgress "+message.percentage);
     const { percentage } = message;
     updateProgressBar(percentage);
   }
@@ -90,13 +90,13 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     divWrapper.remove();
   }
 });
-getCurrentTabId((tabID) => {
-  if (tabID !== null) {
-    console.log(tabID);
-  } else {
-    console.error("No active tab found.");
-  }
-});
+// getCurrentTabId((tabID) => {
+//   if (tabID !== null) {
+//     console.log(tabID);
+//   } else {
+//     console.error("No active tab found.");
+//   }
+// });
 function displayButtons() {
   document.body.appendChild(divWrapper);
   // const slider = document.getElementById("slider");
@@ -167,13 +167,13 @@ function updateProgressBar(percentage) {
 }
 
 
-function getCurrentTabId(callback) {
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    if (tabs.length > 0) {
-      const currentTabId = tabs[0].id;
-      callback(currentTabId);
-    } else {
-      callback(null); // Handle the case when no active tab is found
-    }
-  });
-}
+// function getCurrentTabId(callback) {
+//   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+//     if (tabs.length > 0) {
+//       const currentTabId = tabs[0].id;
+//       callback(currentTabId);
+//     } else {
+//       callback(null); // Handle the case when no active tab is found
+//     }
+//   });
+// }
