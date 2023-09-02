@@ -8,9 +8,7 @@ import { cleanData, WordCount } from "./helper";
 // - Max 40000 tokens/min is allowed to send
 //  -Max 3 req/min is allowed
 //  -Max 200 req/day is allowed
-
-let maxCalls = null; // we will go max 10 api calls
-export async function AICall(dataMain, APIkey, isSummary) {
+export async function AICall(dataMain, APIkey, isSummary,tabID) {
   const openai = new OpenAI({
     apiKey: APIkey, // This is also the default, can be omitted
   });
@@ -18,11 +16,9 @@ export async function AICall(dataMain, APIkey, isSummary) {
   // as theres a limit of 2048 tokens we must convert long data into chunks 2048 tokens has a limit of (1248,1568)
   let final_array = [];
   const TOTAL_DATA = WordCount(dataMain);
-
- 
-  maxCalls = Math.ceil(TOTAL_DATA / 1200);
+  let maxCalls = Math.ceil(TOTAL_DATA/1200); // we will go max 10 api calls
   let callsTillnow = 0;
-  console.log("Main " + TOTAL_DATA + " maxCalls " + maxCalls);
+  console.log("Main " + TOTAL_DATA);
   let percentage = 0;
   try {
     while (
@@ -32,20 +28,16 @@ export async function AICall(dataMain, APIkey, isSummary) {
       // console.log("okkk");
       let data = final_array.join(" ");
       // console.log("data "+data);
-      // console.log("type of data " + typeof data);
+      console.log("type of data " + typeof data);
       if (final_array.length === 0) {
-        // console.log("l===0");
+        console.log("l===0");
         data = dataMain;
       }
       let final_array_inside = [];
-      while (WordCount(data) > 1200  && callsTillnow <= maxCalls) {
+      while (WordCount(data) > 1200) {
         callsTillnow++;
         percentage = (callsTillnow / maxCalls) * 100;
-        // setTimeout(()=>{
-          
-        // },500);
-        console.log(callsTillnow + "/" + maxCalls);
-        console.log("percentage = " + percentage);
+        console.log("percentage " + percentage);
         // console.log("before");
         // console.log(data);
         let words = data.split(" ");
@@ -54,29 +46,28 @@ export async function AICall(dataMain, APIkey, isSummary) {
         let chunk = newAray.join(" ");
         // newAray = cleanData(newAray);
         // let userData = {role:"user",content:newAray.join(" ")};
-        console.log("chunk " + WordCount(chunk));
+        // console.log("chunk " + WordCount(chunk));
         option2.messages[1].content = chunk;
         // console.log(chunk);
         
         let chatCompletion = await openai.chat.completions.create(option2);
-        setTimeout(()=>{
-          updateLoader(percentage);
-        },500) 
+        updateLoader(percentage,tabID);
+
         let gptAnswer = chatCompletion.choices[0].message.content;
         final_array_inside.push(gptAnswer);
         console.log("reply " + WordCount(gptAnswer));
         // Update 'data' to remove the processed chunk
         data = words.slice(1200).join(" ");
         console.log("remaining " + WordCount(data));
-        // maxCalls--; // incrementing calls
+
         // console.log(newAray);
       }
       if (WordCount(data) > 0) {
         console.log("okk");
         final_array_inside.push(data); // Add any remaining text if it's less than 1500 words
-        // console.log(
-        //   "final array inside " + WordCount(final_array_inside.join(" "))
-        // );
+        console.log(
+          "final array inside " + WordCount(final_array_inside.join(" "))
+        );
       }
 
       final_array = [...final_array_inside];
@@ -85,14 +76,13 @@ export async function AICall(dataMain, APIkey, isSummary) {
     }
   } catch (e) {
     console.log("error " + e);
-    percentage = 90;
-    setTimeout(()=>{
-      updateLoader(percentage);
-    },500) 
+    const percentage = 90;
+    updateLoader(percentage,tabID);
+
     // final_array = [...final_array_inside];
     dataMain = final_array.slice(0, 1000).join(" ");
 
-    return LastCall(openai, dataMain, isSummary);
+    return LastCall(openai, dataMain, isSummary, loadingColor);
   }
 
   dataMain = final_array.join(" ");
@@ -105,15 +95,14 @@ async function LastCall(openai, dataMain, isSummary) {
   console.log("issummary " + isSummary);
   console.log(option1);
   console.log(option3);
-  const percentage = 100;
   // console.log("loadingColor");
   // console.log(loadingColor);
-  setTimeout(()=>{
-    updateLoader(percentage);
-  },500) 
+  const percentage = 100;
+    updateLoader(percentage,tabID);
+
   
   if (isSummary === "summary") {
-    option1.messages.push({ role: "user", content: dataMain });
+    option1.messages[1].content=dataMain;
     let chatCompletion = await openai.chat.completions.create(option1);
     let gptAnswer = chatCompletion.choices[0].message.content;
 
@@ -123,7 +112,7 @@ async function LastCall(openai, dataMain, isSummary) {
     
     return { gptAnswer, dataMain };
   } else {
-    option3.messages.push({ role: "user", content: dataMain });
+    option3.messages[1].content=dataMain;
     let chatCompletion = await openai.chat.completions.create(option3);
     let gptAnswer = chatCompletion.choices[0].message.content;
 
@@ -136,14 +125,6 @@ async function LastCall(openai, dataMain, isSummary) {
 }
 
 
-function updateLoader(percentage){
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    if (tabs.length > 0) {
-      const tabId = tabs[0].id;
-      chrome.tabs.sendMessage(tabId,{
-        action: "updateProgress",
-        percentage,
-    });
-    }
-  });
+function updateLoader(percentage,tabID){
+  chrome.tabs.sendMessage(tabID, { action: "updateProgress", percentage: percentage });
 }

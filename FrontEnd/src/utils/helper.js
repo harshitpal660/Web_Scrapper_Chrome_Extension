@@ -21,7 +21,6 @@ export function cleanData(str) {
   str = str.replaceAll("$", "");
   str = str.replaceAll("|", "");
   str = str.replaceAll("/n", "");
-  str = str.replace(/\?/g, '');
   str = str.replace(/\b\w+\.\w+\b/g,"") // removes words which contains . in between
   str = str.replace(/\[[^\]]*\]/g, ""); // remove content within square braces with brackets as well
   str = str.replace(/[0-9]/g, ""); // to remove digits
@@ -37,11 +36,13 @@ export function getImages(
   url,
   animationContainer,
   imageContainer,
-  loadingColor
+  tabID
 ) {
   // console.log("getImages");
   // console.log(loadingColor);
   const Loader = document.getElementsByClassName("progress")[0];
+  const loadingColor = document.querySelector(".progress .color");
+
   // loadingColor.style.width = "80%";
   const result = fetchImages(url);
 
@@ -184,6 +185,7 @@ export function scrap(
   toScrap,
   animationContainer,
   headingMain,
+  tabID
 ) {
   console.log("text data is null " + textData);
   // console.log("2" + process.env.REACT_APP_Web_scrapper);
@@ -196,10 +198,11 @@ export function scrap(
     chrome.runtime.sendMessage(
       {
         action: "sendUrl",
-        url: url,
+        url,
         API: process.env.REACT_APP_Web_Scrapper,
         firstRender: textData,
         isSummary: toScrap,
+        tabID
       },
       (response) => {
         // textdata = response
@@ -244,12 +247,11 @@ export function scrap(
     chrome.runtime.sendMessage(
       {
         action: "sendUrl",
-        url: url,
+        url,
         API: process.env.REACT_APP_Web_Scrapper,
         firstRender: textData,
         isSummary: toScrap,
-        loadingColor: loadingColor,
-        Loader:Loader
+        tabID
       },
       (response) => {
         // textdata = response
@@ -279,54 +281,3 @@ export function scrap(
   }
 }
 
-// if we are fetching data for the first time in that case we need to scrapp the data from the webpage
-export async function fetchScrappedDataFirstTime(
-  url,
-  API,
-  isSummary,
-) {
-  // console.log(Loader);
-  const AIResponse = await fetch("http://localhost:3001/scrape", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ url }),
-  })
-    .then((response) => {
-      if (response.ok) {
-        console.log(response);
-        return response.json();
-      } else {
-        throw new Error("Error fetching data");
-      }
-    })
-    .then((data) => {
-      // Do something with the scraped data
-      if (data === "Data not found") {
-        return "This data is not present in this webpage or they might have applied some additional security";
-      }
-      console.log("Scraped Data:", data);
-      let rawData = data[0] + data[1];
-      // console.log("3"+message.API);
-
-      return AICall(rawData, API, isSummary);
-    })
-    .then((result) => {
-      // const gallery = {};
-
-      const res = [result.gptAnswer, result.dataMain];
-      console.log("result where data is null ");
-      console.log(res);
-      return res;
-    })
-    .catch((error) => {
-      console.log(error);
-      return "Server not reachable";
-    });
-  // console.log("test");
-  // console.log(AIResponse);
-  return AIResponse;
-}
-
-// console.log(process.env.REACT_APP_Web_scrapper2);

@@ -1,6 +1,6 @@
 export const style = document.createElement("style");
 style.textContent = `
-  .wrapper{
+  .webScrapperWrapper{
     z-index:10000000000;
     position: absolute !important;
     top: 10px !important;
@@ -8,7 +8,7 @@ style.textContent = `
     transform: translate(-50%) !important;
     width: fit-content !important;
   }
-  .extensionButton{
+  .webScrapperExtensionButton{
     padding: 3px !important;
     margin: 5px !important;
     border-radius: 5px !important;
@@ -17,18 +17,18 @@ style.textContent = `
     cursor:pointer;
     background-color: rgb(204,38,83) !important;
   }
-  .extensionButton:hover{
+  .webScrapperExtensionButton:hover{
     transform: scale(1.1) !important;
     background-color: rgb(82,217,234) !important;
     box-shadow: 4px 4px 6px rgba(125,164,192,0.5); /* Horizontal offset, vertical offset, blur radius, color */
   }
-  #slider{
+  #webScrapperSlider{
     background-color: rgb(214,235,252);
     display:flex;
     flex-direction:row;
     flex-wrap: nowrap;
   }
-  .aiData{
+  .webScrapperAiData{
     height: 70% !important;
     width: 95% !important;
     top: 100px !important;
@@ -45,26 +45,28 @@ style.textContent = `
     font-family: "Lucida Console", "Courier New", monospace !important;
 
   }
-  responseText{
+  #webScrapperResponseText{
     color: white !important;
     display: inline-block !important;
   }
-  .aiData h1{
+  .webScrapperAiData h1{
     font-size: 30px !important;
     color: white !important;
     font-family: "Lucida Console", "Courier New", monospace !important;
     text-align: center;
   }
-  .aiData::-webkit-scrollbar {
+  .webScrapperAiData::-webkit-scrollbar {
     display: none !important;
   }
 
-  #close{
+  #webScrapperClose{
     cursor: pointer;
   }
 
 
-  #animationContainer{
+  #webScrapperAnimationContainer{
+    color: white !important;
+
     border: 3px solid black !important;
     border-radius: 5px !important;
     overflow: hidden !important;
@@ -75,7 +77,7 @@ style.textContent = `
     transform: translate(-50%,-50%) !important;
   }
 
-  #animation{
+  #webScrapperAnimation{
     color: white !important;
     width: fit-content;
     /* animation properties */
@@ -111,11 +113,11 @@ style.textContent = `
     transform: translateX(-100%);
   }
 }
-#animation p{
+#webScrapperAnimation p{
   white-space: nowrap;
 }
 
-#image-container{
+#webScrapperImage-container{
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -125,35 +127,35 @@ style.textContent = `
   // margin-top: 20px;
 }
 
-.image-wrapper:nth-child(even) {
+.webScrapperImage-wrapper:nth-child(even) {
   background-color: rgb(60,62,66,0.5);
   margin-top: 10px;
   width:100%;
   height:fit-content;
 }
-.image-wrapper:nth-child(odd) {
+.webScrapperImage-wrapper:nth-child(odd) {
   background-color: rgb(104,104,104,0.5);
   margin-top: 10px;
   width:100%;
   height:fit-content;
 }
 
-.imgDiv{
+.webScrapperImgDiv{
   height: 250px;
   width: 250px;
   margin: auto;
 }
-.image{
+.webScrapperImage{
   height: 100%;
   width: 100%;
 }
-.imgHeading{
+.webScrappermgHeading{
   color:white;
   text-align:center;
   margin:0;
   padding:0;
 }
-#close{
+#webScrapperClose{
   width: fit-content; /* Set a width and height to make it round */
   height: 20px;
   border-radius: 5%; /* This creates the round shape */
@@ -164,7 +166,7 @@ style.textContent = `
   text-align: center;
   margin:10px;
 }
-#copy{
+#webScrapperCopy{
   width: fit-content; /* Set a width and height to make it round */
   height: 20px;
   border-radius: 5%; /* This creates the round shape */
@@ -176,7 +178,7 @@ style.textContent = `
   margin:10px;
 }
 
-#actionButtons{
+#webScrapperActionButtons{
   position: relative;
   // bottom: 5px;
   left:50%;
@@ -187,7 +189,7 @@ style.textContent = `
   justify-content: center;
 }
 
-.progress{
+.webScrapperProgress{
   position: absolute;
   top:50%;
   left:50%;
@@ -200,7 +202,7 @@ style.textContent = `
   background-color: #696b6a;
 
 }
-.progress .color{
+.webScrapperProgress .webScrapperColor{
   position: relative;
   background-color: #d45d77;
   width: 0px;
@@ -209,29 +211,3 @@ style.textContent = `
   transition: width linear;
 }
 `
-
-// let i = 0;
-
-// function delayedLog() {
-//   console.log(i);
-// }
-
-// while (i < 5) {
-//   setTimeout(delayedLog, 1000);
-//   i++;
-// }
-
-
-// console.log("Loop finished");
-
-
-// async function example() {
-//   console.log("Start");
-//   await new Promise((resolve) => setTimeout(resolve, 1000));
-//   console.log("End");
-// }
-
-// example();
-
-
-

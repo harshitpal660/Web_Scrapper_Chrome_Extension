@@ -7,6 +7,11 @@ export const option1 = {
         content:
           "I will give you the scrap data of websites you need to provide the formatted summary with Title, description, objectives, Conclusion. Summary should be around 500 words of the original text and give pading between two sections",
       },
+      {
+      role: "user",
+      content:"",
+      
+      },
     ],
     temperature: 1,
     max_tokens: 2048,
@@ -39,6 +44,11 @@ export const option1 = {
         role: "system",
         content:
           "From the provided text generate the major points in a structured and formated way numbering is necessary give some pading between two lines, it should be around 400 words",
+      },
+      {
+        role: "user",
+        content:"",
+        
       },
     ],
     temperature: 1,
