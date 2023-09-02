@@ -82,15 +82,15 @@ export async function AICall(dataMain, APIkey, isSummary,tabID) {
     // final_array = [...final_array_inside];
     dataMain = final_array.slice(0, 1000).join(" ");
 
-    return LastCall(openai, dataMain, isSummary);
+    return LastCall(openai, dataMain, isSummary,tabID);
   }
 
   dataMain = final_array.join(" ");
 
-  return LastCall(openai, dataMain, isSummary);
+  return LastCall(openai, dataMain, isSummary,tabID);
 }
 
-async function LastCall(openai, dataMain, isSummary) {
+async function LastCall(openai, dataMain, isSummary,tabID) {
   console.log("datamain " + dataMain);
   console.log("issummary " + isSummary);
   console.log(option1);
