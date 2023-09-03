@@ -53,6 +53,12 @@ Environment variable should always starts with REACT_APP_
 
 
 
+## Bundle all files
+
+Inside Frontend directory run command. It will generate a dist folder inside your Frontend directory load that in your chrome browser and enjoy scrapping
+```bash
+  npm run build
+```
 ## Demo
 
 Insert gif or link to demo
