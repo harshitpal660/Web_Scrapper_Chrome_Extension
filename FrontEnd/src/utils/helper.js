@@ -39,19 +39,21 @@ export function getImages(
 ) {
   // console.log("getImages");
   // console.log(loadingColor);
-  const Loader = document.getElementsByClassName("progress")[0];
-  const loadingColor = document.querySelector(".progress .color");
-
+  const Loader = document.getElementsByClassName("webScrapperProgress")[0];
+  const loadingColor = document.querySelector(".webScrapperProgress .webScrapperColor");
+  console.log(loadingColor);
+  console.log(Loader);
   // loadingColor.style.width = "80%";
   const result = fetchImages(url);
 
   result.then((response) => {
     console.log("getImages");
     console.log(response);
+    const heading = document.getElementById("webScrapperHeading");
+
     if (response === "Data not found" || response === "Ërror fetching data") {
       animationContainer.remove();
       Loader.remove();
-      const heading = document.getElementById("headingScrapper");
 
       heading.innerHTML = `Sorry :&#128532;`;
       imageContainer.innerText =
@@ -60,8 +62,6 @@ export function getImages(
     } else if (response === "Server not reachable") {
       animationContainer.remove();
       Loader.remove();
-      const heading = document.getElementById("headingScrapper");
-
       heading.innerHTML = `Sorry :&#128532;`;
       imageContainer.innerText = "Your NodeJs Server is not running";
       return;
@@ -87,8 +87,8 @@ export function getImages(
     let uniqueTotal = 0; // to find pecentage as responce has multiple images
     for (let obj of response) {
       if (!uniquesImages.hasOwnProperty(obj.alt)) {
-        console.log("obj.alt");
-        console.log(obj.alt);
+        // console.log("obj.alt");
+        // console.log(obj.alt);
         uniquesImages[obj.alt] = null;
         uniqueTotal++;
       }
@@ -98,32 +98,32 @@ export function getImages(
     const interval = setInterval(() => {
       try {
         if (!uniquesImages.hasOwnProperty(response[count].alt)) {
-          console.log(uniquesImages);
-          console.log(response[count].alt);
+          // console.log(uniquesImages);
+          // console.log(response[count].alt);
           console.log(
             "inside Image wapper " + ((count + 1) / uniqueTotal) * 100
           );
           loadingColor.style.width = ((count + 1) / uniqueTotal) * 100 + "%";
           uniquesImages[response[count].alt] = response[count].src;
-          count++;
-          if (count === uniqueTotal) {
+          console.log(count+" "+uniqueTotal);
+          if (count === uniqueTotal-1) {
             console.log(uniquesImages);
             animationContainer.remove();
             Loader.remove();
             clearInterval(interval);
-            const heading = document.getElementById("headingScrapper");
+            // const heading = document.getElementById("webScrapperHeading");
             heading.innerHTML = `Images: &#x1F60A;`;
 
             for (let key in uniquesImages) {
               let imageWrapper = document.createElement("div");
-              imageWrapper.setAttribute("class", "image-wrapper");
+              imageWrapper.setAttribute("class", "webScrapperImage-wrapper");
               let imgheading = document.createElement("h3");
-              imgheading.setAttribute("class", "imgHeading");
+              imgheading.setAttribute("class", "webScrapperImgHeading");
               imgheading.innerText = key;
               let imgDiv = document.createElement("div");
-              imgDiv.setAttribute("class", "imgDiv");
+              imgDiv.setAttribute("class", "webScrapperImgDiv");
               let img = document.createElement("img");
-              img.setAttribute("class", "image");
+              img.setAttribute("class", "webScrapperImage");
               img.src = uniquesImages[key];
               img.alt = key;
               imgDiv.appendChild(img);
@@ -133,15 +133,14 @@ export function getImages(
             }
           }
         }
+        count++;
       } catch (e) {
         console.log(e);
-        // console.log(uniquesImages);
       }
     }, delay);
   });
 }
-// );
-// }
+
 
 async function fetchImages(url) {
   const gallery = await fetch("http://localhost:3001/gallery", {
@@ -187,8 +186,8 @@ export function scrap(
 ) {
   console.log("text data is null " + textData);
   // console.log("2" + process.env.REACT_APP_Web_scrapper);
-  const Loader = document.getElementsByClassName("progress")[0];
-  const loadingColor = document.querySelector(".progress .color");
+  const Loader = document.getElementsByClassName("webScrapperProgress")[0];
+  const loadingColor = document.querySelector(".webScrapperProgress .webScrapperColor");
   console.log("Helper.js");
   console.log(Loader);
   console.log(loadingColor);
@@ -206,9 +205,9 @@ export function scrap(
         // console.log("object" + typeof response);
         console.log("Response ");
         console.log(response);
-        const heading = document.getElementById("headingScrapper");
+        const heading = document.getElementById("webScrapperHeading");
         if (response === "Server not reachable") {
-          let c = document.getElementById("responseText");
+          let c = document.getElementById("webScrapperResponseText");
           animationContainer.remove();
           Loader.remove();
           c.innerText = response;
@@ -218,7 +217,7 @@ export function scrap(
           response ===
           "This data is not present in this webpage or they might have applied some additional security"
         ) {
-          let c = document.getElementById("responseText");
+          let c = document.getElementById("webScrapperResponseText");
           animationContainer.remove();
           Loader.remove();
           c.innerText = response;
@@ -232,7 +231,7 @@ export function scrap(
         // console.log(gallery);
         console.log(textData);
         heading.innerHTML = `${headingMain}:&#x1F60A;`;
-        let c = document.getElementById("responseText");
+        let c = document.getElementById("webScrapperResponseText");
         animationContainer.remove();
         Loader.remove();
         c.innerText = textData;
@@ -255,9 +254,9 @@ export function scrap(
         // gallery = response[1];
         console.log("Response ");
         console.log(response);
-        const heading = document.getElementById("headingScrapper");
+        const heading = document.getElementById("webScrapperHeading");
         if (response === "Server not reachable") {
-          let c = document.getElementById("responseText");
+          let c = document.getElementById("webScrapperResponseText");
           animationContainer.remove();
           Loader.remove();
           c.innerText = response;
@@ -267,7 +266,7 @@ export function scrap(
         textData = response[0];
         console.log("textdata " + textData);
         heading.innerHTML = `${headingMain}: &#x1F60A;`;
-        let c = document.getElementById("responseText");
+        let c = document.getElementById("webScrapperResponseText");
         animationContainer.remove();
         Loader.remove();
         c.innerText = textData;

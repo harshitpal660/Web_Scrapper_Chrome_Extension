@@ -78,7 +78,6 @@ style.textContent = `
   }
 
   #webScrapperAnimation{
-    color: white !important;
     width: fit-content;
     /* animation properties */
     -moz-transform: translateX(100%);
@@ -115,6 +114,8 @@ style.textContent = `
 }
 #webScrapperAnimation p{
   white-space: nowrap;
+  color: white !important;
+
 }
 
 #webScrapperImage-container{
@@ -149,7 +150,7 @@ style.textContent = `
   height: 100%;
   width: 100%;
 }
-.webScrappermgHeading{
+.webScrapperImgHeading{
   color:white;
   text-align:center;
   margin:0;
