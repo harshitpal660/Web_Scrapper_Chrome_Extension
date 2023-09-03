@@ -95,18 +95,19 @@ export function getImages(
     }
     uniquesImages = {};
     console.log(uniqueTotal);
+    let uniqueCount = 0;
     const interval = setInterval(() => {
       try {
         if (!uniquesImages.hasOwnProperty(response[count].alt)) {
-          // console.log(uniquesImages);
-          // console.log(response[count].alt);
+          console.log(uniquesImages);
+          console.log(response[count].alt);
           console.log(
-            "inside Image wapper " + ((count + 1) / uniqueTotal) * 100
+            "inside Image wapper " + ((uniqueCount + 1) / uniqueTotal) * 100
           );
-          loadingColor.style.width = ((count + 1) / uniqueTotal) * 100 + "%";
-          uniquesImages[response[count].alt] = response[count].src;
-          console.log(count+" "+uniqueTotal);
-          if (count === uniqueTotal-1) {
+          loadingColor.style.width = ((uniqueCount + 1) / uniqueTotal) * 100 + "%";
+          uniquesImages[response[uniqueCount].alt] = response[uniqueCount].src;
+          console.log(uniqueCount+" "+uniqueTotal);
+          if (uniqueCount === uniqueTotal-1) {
             console.log(uniquesImages);
             animationContainer.remove();
             Loader.remove();
@@ -132,6 +133,7 @@ export function getImages(
               imageContainer.appendChild(imageWrapper);
             }
           }
+          uniqueCount++;
         }
         count++;
       } catch (e) {
