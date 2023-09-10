@@ -212,6 +212,6 @@ style.textContent = `
   width: 0px;
   height: 10px;
   border-radius: 15px;
-  transition: width linear;
+  transition: width linear 5s;
 }
 `

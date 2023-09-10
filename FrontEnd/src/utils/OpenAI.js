@@ -11,8 +11,9 @@ import { cleanData, WordCount } from "./helper";
 
 
 export async function AICall(dataMain, APIkey, isSummary, tabID) {
+  console.log("inside AICall"+APIkey);
   const openai = new OpenAI({
-    apiKey: APIkey, // This is also the default, can be omitted
+    apiKey: APIkey,
   });
   dataMain = cleanData(dataMain);
   // as theres a limit of 2048 tokens we must convert long data into chunks 2048 tokens has a limit of (1248,1568)
